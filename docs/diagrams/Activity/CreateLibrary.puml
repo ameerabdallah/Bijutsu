@@ -1,0 +1,15 @@
+@startuml
+start
+
+fork
+  :Provide library name;
+fork again
+  :Provide library type;
+fork again
+  :Provide content directory(s);
+endfork
+:Request to create library;
+:Initial library scan;
+
+stop
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+start
+:Send "Delete Library" signal;
+
+group Delete Library
+:Send request to database to delete the Library;
+end group
+
+stop
+@enduml

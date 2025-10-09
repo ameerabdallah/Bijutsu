@@ -1,0 +1,17 @@
+@startuml
+start
+
+:Send "Scan Libary" signal;
+group "Scan Library"
+  :Fetch directories from database;
+
+  group Parse directories (parallelize?)
+    :Parse directory name;
+    :Store directory path in database as Series;
+    :Parse files in directory;
+    :Store filepaths in database as Installments;
+  end group
+end group
+
+stop
+@enduml

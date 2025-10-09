@@ -1,0 +1,18 @@
+@startuml
+
+autonumber
+
+actor User
+participant "Web Interface" as Web
+participant "Authentication Service" as Auth
+participant "Backend Service" as Backend
+
+User -> Web: Request to create a shareable link for selected Content
+Web -> Auth: Authenticate User
+Auth --> Web: Authentication Successful
+Web -> Backend: Send "Create Shareable Link" signal
+Backend -> Backend: Generate unique shareable link token
+Backend --> Web: Return shareable link
+Web -> User: Provide shareable link
+
+@enduml

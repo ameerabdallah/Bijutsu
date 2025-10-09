@@ -1,0 +1,22 @@
+@startuml
+
+autonumber
+
+actor User
+participant "Web Interface" as Web
+participant "Authentication Service" as Auth
+participant "Backend Service" as Backend
+database "Database" as DB
+
+User -> Web: Request to delete a Library
+Web -> Auth: Authenticate User
+Auth --> Web: Authentication Successful
+Web -> User: Prompt for Library Selection
+User -> Web: Select Library to Delete
+Web -> Backend: Send Delete Library Request
+Backend -> DB: Delete Library from Database
+DB --> Backend: Library Deleted Successfully
+Backend --> Web: Library Deleted Successfully
+Web -> User: Confirm Library Deletion
+
+@enduml

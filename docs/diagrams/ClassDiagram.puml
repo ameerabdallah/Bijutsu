@@ -1,0 +1,160 @@
+@startuml
+package com.ameerdev {
+
+    package library {
+        enum ReadDirection {
+            LEFT_TO_RIGHT
+            RIGHT_TO_LEFT
+        }
+
+        enum LibraryType {
+            MANGA(RIGHT_TO_LEFT)
+            COMIC(LEFT_TO_RIGHT)
+            - LibraryType(readDirection: ReadDirection)
+            + defaultReadDirection: ReadDirection
+        }
+
+        class Library {
+            - series: Set<Series>
+            - name: String
+            - description: String
+            - readDirection: ReadDirection
+            - path: Path
+            - libraryType: LibraryType
+            - metadataAgent: MetadataAgent
+            + getName(): String
+            + getDescription(): String
+            + getReadDirection(): ReadDirection
+            + getPath(): Path
+            + getLibraryType(): LibraryType
+            + getMetadataAgent(): MetadataAgent
+        }
+
+        Library o-- LibraryType
+        LibraryType o-- ReadDirection
+    }
+
+    package content {
+        interface Shareable {
+            + getShareLink(): String
+        }
+
+        abstract class Content implements Shareable {
+            # path: Path
+            + getPath(): Path
+        }
+
+        class Series extends Content {
+            - installments: Set<Installment>
+            - metadataSourceId: String
+            - title: String
+            - author: String
+            - description: String
+            - releaseDate: Date
+            + getMetadataSourceId(): String
+            + getTitle(): String
+            + getAuthor(): String
+            + getDescription(): String
+            + getReleaseDate(): Date
+        }
+
+        class SeriesBuilder {
+            + addSeriesMetadata(seriesMetadata: SeriesMetadata): SeriesBuilder
+            + addInstallment(installment: Installment): SeriesBuilder
+            + addInstallments(installments: Set<Installment>): SeriesBuilder
+            + build(): Series
+        }
+        Series *-- SeriesBuilder
+        SeriesBuilder .. Installment
+
+        class Installment extends Content {
+            - pages: Set<Page>
+            - metadataSourceId: String
+            - title: String
+            - number: int
+            - installmentType: InstallmentType
+            + getPages(): Set<Page>
+            + getMetadataSourceId(): String
+            + getTitle(): String
+            + getNumber(): int
+            + getInstallmentType(): InstallmentType
+        }
+        class InstallmentBuilder {
+            + addInstallmentMetadata(installmentMetadata: InstallmentMetadata): InstallmentBuilder
+            + addPage(page: Page): InstallmentBuilder
+            + addPages(pages: Set<Page>): InstallmentBuilder
+            + build(): Installment
+        }
+        Installment *-- InstallmentBuilder
+        InstallmentBuilder .. Page
+
+        enum InstallmentType {
+            CHAPTER
+            VOLUME
+            ISSUE
+            SPECIAL
+            ONE_SHOT
+        }
+
+        Installment o-- InstallmentType
+
+        class Page extends Content {
+            - pageNumber: int
+        }
+
+        Series "1" *-- "1..*" Installment
+        Installment "1" *-- "0..*" Page
+    }
+
+
+' Information gathered from external sources about the series and installments
+    package metadata_agent {
+        abstract class MetadataAgent {
+            + fetchSeriesMetadata(sourceId: String): SeriesMetadata
+            + fetchInstallmentMetadata(sourceId: String): InstallmentMetadata
+            # parseSeriesMetadata(jsonData: String): Map<String, Object>
+            # parseInstallmentMetadata(jsonData: String): Map<String, Object>
+        }
+
+        class MetadataAgentFactory {
+            + createAgent(sourceId: String): MetadataAgent
+        }
+
+        MetadataAgentFactory .. MetadataAgent
+
+        class MangaUpdatesAgent extends MetadataAgent {
+        }
+
+        class ComicVineAgent extends MetadataAgent {
+        }
+
+        class SeriesMetadata {
+            - title: String
+            - author: String
+            - description: String
+            - releaseDate: Date
+            + SeriesMetadata(jsonData: String)
+            + getTitle(): String
+            + getAuthor(): String
+            + getDescription(): String
+            + getReleaseDate(): Date
+        }
+
+        class InstallmentMetadata {
+            - title: String
+            - number: int
+            + InstallmentMetadata(jsonData: String)
+            + getTitle(): String
+            + getNumber(): int
+        }
+
+        MetadataAgent .. SeriesMetadata
+        MetadataAgent .. InstallmentMetadata
+    }
+
+    library.Library "1" *- "0..*" content.Series
+    content.InstallmentBuilder .. metadata_agent.InstallmentMetadata
+    library.Library .. metadata_agent.MetadataAgent
+    content.SeriesBuilder .. metadata_agent.SeriesMetadata
+}
+@enduml

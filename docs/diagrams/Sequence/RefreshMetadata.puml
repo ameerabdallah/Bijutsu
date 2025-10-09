@@ -1,0 +1,29 @@
+@startuml
+
+autonumber
+
+actor User
+participant "Web Interface" as Web
+participant "Authentication Service" as Auth
+participant "Backend Service" as Backend
+participant "File System" as FileSys
+database "Database" as DB
+participant "External Metadata Service \n (MangaUpdates/Comic Metadata)" as ExtMeta
+
+User -> Web: Request to refresh metadata for selected Content
+Web -> Auth: Authenticate User
+Auth --> Web: Authentication Successful
+Web -> Backend: Send "Refresh Metadata" signal
+Backend -> DB: Fetch Content path from database
+DB --> Backend: Return Content path
+Backend -> FileSys: Rescan file/content path
+FileSys --> Backend: Return updated file/content path
+Backend -> Backend: Parse file/content path
+Backend -> ExtMeta: Search for corresponding metadata
+ExtMeta --> Backend: Return matching metadata (if found)
+Backend -> DB: Update Content metadata in database
+DB --> Backend: Metadata updated successfully
+Backend --> Web: Metadata refreshed successfully
+Web -> User: Confirm metadata refresh
+
+@enduml

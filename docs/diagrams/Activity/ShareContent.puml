@@ -1,0 +1,10 @@
+@startuml
+|#pink|User 1|
+start
+:Create share link for "Content";
+:Provider other user with share link;
+|#lightgray|User 2|
+:Click share link;
+:Gets directed to shared "Content";
+stop
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+
+autonumber
+
+actor User
+participant "Web Interface" as Web
+participant "Authentication Service" as Auth
+participant "Backend Service" as Backend
+participant "File System" as FileSys
+database "Database" as DB
+
+User -> Web: Request to download an Installment
+Web -> Auth: Authenticate User
+Auth --> Web: Authentication Successful
+Web -> User: Prompt for Installment Selection
+User -> Web: Select Installment to Download
+Web -> Backend: Send "Fetch Installment" signal
+Backend -> DB: Fetch Installment filepath from the database
+DB --> Backend: Return filepath
+Backend -> FileSys: Retrieve file from filesystem
+alt File is directory of images
+    FileSys -> Backend: Create CBZ file from images on-the-fly
+else File is PDF or CBZ
+    FileSys --> Backend: Return file
+end
+Backend --> Web: Return corresponding file to the user
+Web -> User: Provide file for download
+
+@enduml

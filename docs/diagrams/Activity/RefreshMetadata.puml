@@ -1,0 +1,18 @@
+@startuml
+|#pink|Actor|
+start
+:Send request for Content metadata to be filled;
+:Fetch Content path from database;
+:Parse file/content path;
+:Search for corresponding metadata for Content;
+|#lightgrey|Metadata Database|
+:Search for matching metadata;
+|Actor|
+if (Matching Metadata found) then (Return Metadata)
+:Fill Metadata for Content ;
+else
+:Report that no matching metadata was found;
+endif
+
+stop
+@enduml

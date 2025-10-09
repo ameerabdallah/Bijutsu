@@ -1,0 +1,9 @@
+@startuml
+start
+
+:Send "Fetch Installment" signal;
+:Fetch Installment filepath from the database;
+:Return corresponding file to the user;
+
+stop
+@enduml

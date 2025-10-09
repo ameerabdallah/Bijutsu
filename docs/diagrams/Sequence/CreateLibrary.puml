@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User
+participant "Web Interface" as Web
+participant "Authentication Service" as Auth
+participant "Backend Service" as Backend
+participant "File System" as FileSys
+database "Database" as DB
+
+User -> Web: Request to create a new Library
+Web -> Auth: Authenticate User
+Auth --> Web: Authentication Successful
+Web -> User: Prompt for Library Details
+User -> Web: Submit Library Details (Name, Type, Directory)s
+Web -> Backend: Send Create Library Request
+Backend -> FileSys: Verify Directory Exists
+FileSys --> Backend: Directory Exists
+Backend -> DB: Store Library Details
+DB --> Backend: Library Created Successfully
+Backend --> Web: Library Created Successfully
+Web -> User: Confirm Library Creation
+
+@enduml
