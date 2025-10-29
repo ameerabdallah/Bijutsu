@@ -1,10 +1,6 @@
 package com.ameerdev.model.media;
 
-public class Series implements Shareable {
+public class Series {
     int id;
     int metadataId;
-    @Override
-    public String getShareLink() {
-        return "";
-    }
 }

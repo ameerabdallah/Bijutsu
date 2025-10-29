@@ -1,10 +1,12 @@
 package com.ameerdev.tests_for_libraries;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@QuarkusTest
 public class ApacheLevenshteinDistanceTest {
 
     @Test

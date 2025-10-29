@@ -1,20 +1,44 @@
 @startuml
 package com.ameerdev {
 
-    package services {
+    package resource {
         class CreateLibrary {
+            name: String
+            description: String
+            readDirection: ReadDirection
+            libraryType: BookType
         }
-        class LibraryService {
+        class LibraryResource {
+            libraryService: LibraryService
             + createNewLibrary(library: CreateLibrary)
             + scanLibrary(libraryId: int)
             + deleteLibrary(libraryId: int)
         }
-        CreateLibrary .. LibraryService
+        CreateLibrary .. LibraryResource
+        class SeriesResource {
+            + getAllSeries(libraryId: int, page: int, pageSize: int)
+            + refreshMetadata(seriesId: int)
+        }
+        class ReleaseResource {
+            + refreshMetadata(releaseId: int)
+        }
+    }
+    package service {
+        class LibraryService {
+        }
         class SeriesService {
         }
         class ReleaseService {
         }
     }
+
+    resource.LibraryResource .. service.LibraryService
+    resource.SeriesResource .. service.SeriesService
+    resource.ReleaseResource .. service.ReleaseService
+
+    resource.CreateLibrary o- model.BookType
+    resource.CreateLibrary o- model.ReadDirection
+
     package model {
         enum BookType {
             +<u>MANGA</u>
@@ -56,15 +80,11 @@ package com.ameerdev {
             }
 
             Library o-- BookType
-            Library o-- ReadDirection
-            BookType o-- ReadDirection
-
-            interface Shareable {
-                + getShareLink(): String
-            }
+            Library o- ReadDirection
+            BookType o- ReadDirection
 
             ' Database backed
-            class Series implements Shareable {
+            class Series {
                 - id: int
                 - libraryId: int
                 - metadataId: int
@@ -75,7 +95,7 @@ package com.ameerdev {
             }
 
             ' Database backed
-            class Release implements Shareable {
+            class Release {
                 - id: int
                 - seriesId: int
                 - metadataId: int
@@ -124,7 +144,7 @@ package com.ameerdev {
 
             Release o-- ReleaseType
 
-            class Page implements Shareable {
+            class Page {
                 - pageNumber: int
             }
 
@@ -169,7 +189,7 @@ package com.ameerdev {
             class MangaUpdatesMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
                 seriesApi: SeriesApi (injected)
             }
-            client.SeriesApi .. MangaUpdatesMetadataAgent
+            client.SeriesApi . MangaUpdatesMetadataAgent
         }
 
         package comicvine {
@@ -178,7 +198,7 @@ package com.ameerdev {
             class ComicVineMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
                 seriesApi: SeriesApi (injected)
             }
-            client.SeriesApi .. ComicVineMetadataAgent
+            client.SeriesApi . ComicVineMetadataAgent
         }
 
         MetadataAgent .. com.ameerdev.model.media.SeriesMetadata

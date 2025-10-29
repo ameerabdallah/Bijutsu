@@ -1,12 +1,14 @@
-package com.ameerdev.model.library;
+package com.ameerdev.model.media;
 
 import com.ameerdev.model.BookType;
 import com.ameerdev.model.ReadDirection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class Library {
     @Getter
     @Setter
@@ -25,7 +27,7 @@ public class Library {
     private BookType bookType;
 
     @Setter
-    private ReadDirection readDirection;
+    private ReadDirection readDirection = ReadDirection.DEFAULT;
 
     public ReadDirection getReadDirection() {
         return readDirection == ReadDirection.DEFAULT ? bookType.defaultReadDirection : readDirection;

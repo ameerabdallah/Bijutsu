@@ -1,11 +1,7 @@
 package com.ameerdev.model.media;
 
-public class Release implements Shareable {
-
-    private ReleaseMetadata releaseMetadata;
-
-    @Override
-    public String getShareLink() {
-        return "";
-    }
+public class Release {
+    private int id;
+    private int metadataId;
+    private int releaseType;
 }
