@@ -1,8 +1,8 @@
 @startuml
 start
 
-:Send "Fetch Installment" signal;
-:Fetch Installment filepath from the database;
+:Send "Fetch Release" signal;
+:Fetch Release filepath from the database;
 :Return corresponding file to the user;
 
 stop

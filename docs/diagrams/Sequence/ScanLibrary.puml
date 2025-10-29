@@ -19,7 +19,7 @@ Backend -> FileSys: Scan Library directories
 FileSys --> Backend: Return scanned file paths
 Backend -> DB: Update database with new/removed Content
 DB --> Backend: Database updated successfully
-group RefreshMetadata for new Content
+group Refresh Metadata for new Content
     Backend -> Backend: Parse new file paths
     Backend -> "External Metadata Service \n (MangaUpdates/Comic Metadata)" as ExtMeta: Search for corresponding metadata
     ExtMeta --> Backend: Return matching metadata (if found)

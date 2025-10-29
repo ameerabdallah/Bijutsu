@@ -9,7 +9,7 @@ group "Scan Library"
     :Parse directory name;
     :Store directory path in database as Series;
     :Parse files in directory;
-    :Store filepaths in database as Installments;
+    :Store filepaths in database as Releases;
   end group
 end group
 

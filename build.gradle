@@ -8,12 +8,43 @@ repositories {
     mavenLocal()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/classes/java/quarkus-generated-sources/open-api'
+        }
+    }
+}
+
+configurations {
+    mockitoAgent
+}
+
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'io.quarkiverse.openapi.generator:quarkus-openapi-generator:2.12.1'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    implementation 'org.apache.commons:commons-text:1.14.0'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'org.mockito:mockito-core:5.20.0' // core library
+    mockitoAgent('org.mockito:mockito-core:5.20.0') {
+        transitive = false
+    }
+}
+
+tasks.withType(Test).configureEach {
+    jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
 
 group = 'com.ameerdev'
@@ -26,6 +57,7 @@ java {
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    jvmArgs += "-Xshare:off"
 }
 compileJava {
     options.encoding = 'UTF-8'
@@ -35,3 +67,17 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+def test = tasks.named("test") {
+    useJUnitPlatform {
+        excludeTags "integration"
+    }
+}
+
+tasks.register("integrationTest", Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+    shouldRunAfter test
+}
+

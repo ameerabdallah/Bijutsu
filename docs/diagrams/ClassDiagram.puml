@@ -1,160 +1,190 @@
 @startuml
 package com.ameerdev {
 
-    package library {
-        enum ReadDirection {
-            LEFT_TO_RIGHT
-            RIGHT_TO_LEFT
+    package services {
+        class CreateLibrary {
         }
-
-        enum LibraryType {
-            MANGA(RIGHT_TO_LEFT)
-            COMIC(LEFT_TO_RIGHT)
-            - LibraryType(readDirection: ReadDirection)
+        class LibraryService {
+            + createNewLibrary(library: CreateLibrary)
+            + scanLibrary(libraryId: int)
+            + deleteLibrary(libraryId: int)
+        }
+        CreateLibrary .. LibraryService
+        class SeriesService {
+        }
+        class ReleaseService {
+        }
+    }
+    package model {
+        enum BookType {
+            +<u>MANGA</u>
+            +<u>COMIC</u>
+            - BookType(readDirection: ReadDirection)
             + defaultReadDirection: ReadDirection
         }
 
-        class Library {
-            - series: Set<Series>
-            - name: String
-            - description: String
-            - readDirection: ReadDirection
-            - path: Path
-            - libraryType: LibraryType
-            - metadataAgent: MetadataAgent
-            + getName(): String
-            + getDescription(): String
-            + getReadDirection(): ReadDirection
-            + getPath(): Path
-            + getLibraryType(): LibraryType
-            + getMetadataAgent(): MetadataAgent
+        enum ReadDirection {
+            +<u>RIGHT_TO_LEFT</u>
+            +<u>LEFT_TO_RIGHT</u>
+            +<u>DEFAULT</u>
         }
 
-        Library o-- LibraryType
-        LibraryType o-- ReadDirection
+        package media {
+            class Library {
+                - id: int
+                - name: String
+                - description: String
+                - readDirection: ReadDirection
+                - libraryType: BookType
+                - paths: List<Path>
+                - series: Set<Series>
+                + getName(): String
+                + getDescription(): String
+                + getLibraryType(): String
+                + getReadDirection(): ReadDirection
+                + getLibraryType(): BookType
+
+                + setName(): void
+                + setDescription(): void
+                + setLibraryType(): void
+                + setReadDirection(): void
+                + setLibraryType(): void
+
+                + querySeries(): Set<Series>
+                + queryPaths(): List<Path>
+                + getOrQueryPaths(): List<Path>
+            }
+
+            Library o-- BookType
+            Library o-- ReadDirection
+            BookType o-- ReadDirection
+
+            interface Shareable {
+                + getShareLink(): String
+            }
+
+            ' Database backed
+            class Series implements Shareable {
+                - id: int
+                - libraryId: int
+                - metadataId: int
+                - path: Path
+                + getId(): int
+                + getLibraryId: int
+                + getPath: Path
+            }
+
+            ' Database backed
+            class Release implements Shareable {
+                - id: int
+                - seriesId: int
+                - metadataId: int
+                - path: String
+                - releaseType: ReleaseType
+                - pages: List<Page>
+                + loadOrGetPages(): List<Page>
+                + reloadPages(): List<Page>
+                - loadPagesFromFileSystem(): List<Page>
+                + getId(): int
+                + getSeriesId(): int
+            }
+
+            class SeriesMetadata {
+                - title: String
+                - author: String
+                - description: String
+                - releaseDate: Date
+                + SeriesMetadata(jsonData: String)
+                + getTitle(): String
+                + getAuthor(): String
+                + getDescription(): String
+                + getReleaseDate(): Date
+            }
+
+            Series "1" .. "1" SeriesMetadata
+
+            class ReleaseMetadata {
+                - title: String
+                - index: int
+                + getTitle(): String
+                + getIndex(): int
+                + setTitle(): String
+                + setIndex(): int
+            }
+
+            Release "1" .. "1" ReleaseMetadata
+
+            enum ReleaseType {
+                CHAPTER
+                VOLUME
+                ISSUE
+                SPECIAL
+                ONE_SHOT
+            }
+
+            Release o-- ReleaseType
+
+            class Page implements Shareable {
+                - pageNumber: int
+            }
+
+            Series "1" .. "1..*" Release
+            Release "1" .. "1..*" Page
+
+            package repositories {
+                class SeriesRepository {
+                }
+                class ReleaseRepository {
+                }
+                class LibraryRepository {
+                }
+            }
+        }
     }
 
-    package content {
-        interface Shareable {
-            + getShareLink(): String
-        }
 
-        abstract class Content implements Shareable {
-            # path: Path
-            + getPath(): Path
-        }
-
-        class Series extends Content {
-            - installments: Set<Installment>
-            - metadataSourceId: String
-            - title: String
-            - author: String
-            - description: String
-            - releaseDate: Date
-            + getMetadataSourceId(): String
-            + getTitle(): String
-            + getAuthor(): String
-            + getDescription(): String
-            + getReleaseDate(): Date
-        }
-
-        class SeriesBuilder {
-            + addSeriesMetadata(seriesMetadata: SeriesMetadata): SeriesBuilder
-            + addInstallment(installment: Installment): SeriesBuilder
-            + addInstallments(installments: Set<Installment>): SeriesBuilder
-            + build(): Series
-        }
-        Series *-- SeriesBuilder
-        SeriesBuilder .. Installment
-
-        class Installment extends Content {
-            - pages: Set<Page>
-            - metadataSourceId: String
-            - title: String
-            - number: int
-            - installmentType: InstallmentType
-            + getPages(): Set<Page>
-            + getMetadataSourceId(): String
-            + getTitle(): String
-            + getNumber(): int
-            + getInstallmentType(): InstallmentType
-        }
-        class InstallmentBuilder {
-            + addInstallmentMetadata(installmentMetadata: InstallmentMetadata): InstallmentBuilder
-            + addPage(page: Page): InstallmentBuilder
-            + addPages(pages: Set<Page>): InstallmentBuilder
-            + build(): Installment
-        }
-        Installment *-- InstallmentBuilder
-        InstallmentBuilder .. Page
-
-        enum InstallmentType {
-            CHAPTER
-            VOLUME
-            ISSUE
-            SPECIAL
-            ONE_SHOT
-        }
-
-        Installment o-- InstallmentType
-
-        class Page extends Content {
-            - pageNumber: int
-        }
-
-        Series "1" *-- "1..*" Installment
-        Installment "1" *-- "0..*" Page
-    }
-
-
-' Information gathered from external sources about the series and installments
+' Information gathered from external sources about the series and Releases
     package metadata_agent {
-        abstract class MetadataAgent {
-            + fetchSeriesMetadata(sourceId: String): SeriesMetadata
-            + fetchInstallmentMetadata(sourceId: String): InstallmentMetadata
-            # parseSeriesMetadata(jsonData: String): Map<String, Object>
-            # parseInstallmentMetadata(jsonData: String): Map<String, Object>
-        }
 
         class MetadataAgentFactory {
-            + createAgent(sourceId: String): MetadataAgent
+            - metadataAgent: MetadataAgent
+            + getAgentInstance(libraryType: LibraryType): MetadataAgent
+        }
+
+        interface MetadataAgent {
+            - metadataType: BookType
+            - metadataSourceApiUrl: Optional<String>
+            + searchByName(name: String): Optional<String>
+            + fetchSeriesMetadata(metadataSeriesId: String): Optional<SeriesMetadata>
+            + fetchReleaseMetadata(metadataSeriesId: String, index: String): Optional<ReleaseMetadata>
         }
 
         MetadataAgentFactory .. MetadataAgent
 
-        class MangaUpdatesAgent extends MetadataAgent {
+        package mangaupdates {
+            package client {
+                class SeriesApi{
+                }
+            }
+            class MangaUpdatesMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
+                seriesApi: SeriesApi (injected)
+            }
+            client.SeriesApi .. MangaUpdatesMetadataAgent
         }
 
-        class ComicVineAgent extends MetadataAgent {
+        package comicvine {
+            package client {
+            }
+            class ComicVineMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
+                seriesApi: SeriesApi (injected)
+            }
+            client.SeriesApi .. ComicVineMetadataAgent
         }
 
-        class SeriesMetadata {
-            - title: String
-            - author: String
-            - description: String
-            - releaseDate: Date
-            + SeriesMetadata(jsonData: String)
-            + getTitle(): String
-            + getAuthor(): String
-            + getDescription(): String
-            + getReleaseDate(): Date
-        }
-
-        class InstallmentMetadata {
-            - title: String
-            - number: int
-            + InstallmentMetadata(jsonData: String)
-            + getTitle(): String
-            + getNumber(): int
-        }
-
-        MetadataAgent .. SeriesMetadata
-        MetadataAgent .. InstallmentMetadata
+        MetadataAgent .. com.ameerdev.model.media.SeriesMetadata
+        MetadataAgent .. com.ameerdev.model.media.ReleaseMetadata
     }
 
-    library.Library "1" *- "0..*" content.Series
-    content.InstallmentBuilder .. metadata_agent.InstallmentMetadata
-    library.Library .. metadata_agent.MetadataAgent
-    content.SeriesBuilder .. metadata_agent.SeriesMetadata
+    model.media.Library "1" -- "0..*" model.media.Series
 }
 @enduml

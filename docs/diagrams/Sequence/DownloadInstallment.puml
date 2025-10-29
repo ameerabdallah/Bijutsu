@@ -9,13 +9,13 @@ participant "Backend Service" as Backend
 participant "File System" as FileSys
 database "Database" as DB
 
-User -> Web: Request to download an Installment
+User -> Web: Request to download an Release
 Web -> Auth: Authenticate User
 Auth --> Web: Authentication Successful
-Web -> User: Prompt for Installment Selection
-User -> Web: Select Installment to Download
-Web -> Backend: Send "Fetch Installment" signal
-Backend -> DB: Fetch Installment filepath from the database
+Web -> User: Prompt for Release Selection
+User -> Web: Select Release to Download
+Web -> Backend: Send "Fetch Release" signal
+Backend -> DB: Fetch Release filepath from the database
 DB --> Backend: Return filepath
 Backend -> FileSys: Retrieve file from filesystem
 alt File is directory of images
