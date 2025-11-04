@@ -9,7 +9,7 @@
 
 ## Test 2
 
-* Manually run the [manga updates integration tests](../src/test/java/com/ameerdev/metadata_agent/mangaupdates/MangaUpdatesMetadataAgentIntegrationTest.java) which
+* Manually run the [manga updates integration tests](../bijutsu/src/test/java/com/ameerdev/metadata_agent/mangaupdates/MangaUpdatesMetadataAgentIntegrationTest.java) which
 ensures that the API for MangaUpdates is able to be hit.
 
 
