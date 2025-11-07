@@ -12,7 +12,7 @@ public class MockUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {
-        MAPPER.registerModule(new JavaTimeModule());
+        MAPPER.findAndRegisterModules();
     }
 
     public static <T> T loadMockResponseObject(String resourcePath, Class<T> clazz) throws IOException {

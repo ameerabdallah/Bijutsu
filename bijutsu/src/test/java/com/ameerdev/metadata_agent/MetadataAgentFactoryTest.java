@@ -1,8 +1,8 @@
 package com.ameerdev.metadata_agent;
 
+import com.ameerdev.jooq.enums.BookType;
 import com.ameerdev.metadata_agent.comicvine.ComicVineMetadataAgent;
 import com.ameerdev.metadata_agent.mangaupdates.MangaUpdatesMetadataAgent;
-import com.ameerdev.model.BookType;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;

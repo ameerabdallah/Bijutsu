@@ -1,14 +1,14 @@
 package com.ameerdev.metadata_agent.mangaupdates;
 
+import com.ameerdev.jooq.enums.BookType;
+import com.ameerdev.jooq.tables.pojos.Release;
+import com.ameerdev.jooq.tables.pojos.Series;
 import com.ameerdev.metadata_agent.MetadataAgent;
 import com.ameerdev.metadata_agent.mangaupdates.client.api.SeriesApi;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesModelV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchRequestV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1Results;
-import com.ameerdev.model.BookType;
-import com.ameerdev.model.media.ReleaseMetadata;
-import com.ameerdev.model.media.SeriesMetadata;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -32,7 +32,7 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
 
     @Override
     public Optional<String> searchByName(String name) {
-        SeriesSearchRequestV1.SeriesSearchRequestV1Builder builder = SeriesSearchRequestV1.builder();
+        var builder = SeriesSearchRequestV1.builder();
 
         try {
             SeriesSearchResponseV1 response = seriesApi.searchSeriesPost(builder.search(name).build());
@@ -52,21 +52,21 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
     }
 
     @Override
-    public Optional<SeriesMetadata> fetchSeriesMetadata(String metadataSeriesId) {
+    public Optional<Series> fetchSeriesMetadata(String metadataSeriesId) {
         SeriesModelV1 response = seriesApi.retrieveSeries(Long.valueOf(metadataSeriesId), false);
+        Series series = new Series();
 
         return Optional.of(
-                SeriesMetadata.builder()
-                        .metadataSourceId(String.valueOf(response.getSeriesId()))
-                        .title(response.getTitle())
-                        // TODO: Add release date
-                        .description(response.getDescription())
-                        .build()
+                series
+                        .setMetadataSourceId(String.valueOf(response.getSeriesId()))
+                        .setTitle(response.getTitle())
+                        .setReleaseYear(Integer.valueOf(response.getYear()))
+                        .setDescription(response.getDescription())
         );
     }
 
     @Override
-    public Optional<ReleaseMetadata> fetchReleaseMetadata(String metadataSeriesId, int index) {
+    public Optional<Release> fetchReleaseMetadata(String metadataSeriesId, int index) {
 //        seriesApi.searchSeriesPost()
         return Optional.empty();
     }

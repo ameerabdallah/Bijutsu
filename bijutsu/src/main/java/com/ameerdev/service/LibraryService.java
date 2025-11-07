@@ -1,14 +1,16 @@
 package com.ameerdev.service;
 
-import com.ameerdev.model.BookType;
-import com.ameerdev.model.ReadDirection;
+import com.ameerdev.repositories.LibraryRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Response;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class LibraryService {
+
+    @Inject
+    LibraryRepository repository;
+
+    void performLibraryScan(int libraryId) {
+
+    }
 }

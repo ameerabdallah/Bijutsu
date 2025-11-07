@@ -1,0 +1,15 @@
+name: bijutsu
+services:
+  db:
+    image: pgautoupgrade/pgautoupgrade:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bijutsu
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+    db_data:

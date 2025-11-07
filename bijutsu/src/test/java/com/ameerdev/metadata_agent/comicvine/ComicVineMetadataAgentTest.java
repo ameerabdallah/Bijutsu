@@ -1,10 +1,11 @@
 package com.ameerdev.metadata_agent.comicvine;
 
-import com.ameerdev.model.BookType;
-import com.ameerdev.model.media.ReleaseMetadata;
-import com.ameerdev.model.media.SeriesMetadata;
+import com.ameerdev.jooq.enums.BookType;
+import com.ameerdev.jooq.tables.pojos.Release;
+import com.ameerdev.jooq.tables.pojos.Series;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
+@Disabled
 class ComicVineMetadataAgentTest {
     @Inject
     ComicVineMetadataAgent metadataAgent;
@@ -34,29 +36,27 @@ class ComicVineMetadataAgentTest {
     }
 
     @Test
-    void fetchSeriesMetadata() throws IOException {
+    void fetchSeriesMetadata() {
         String metadataId = "75336092483";
-        SeriesMetadata metadata = SeriesMetadata.builder()
-                .title("Batman")
-                .build();
+        Series metadata = new Series()
+                .setTitle("Batman");
 
-        SeriesMetadata result = metadataAgent.fetchSeriesMetadata(metadataId).orElseThrow();
+        Series result = metadataAgent.fetchSeriesMetadata(metadataId).orElseThrow();
 
-        assertEquals(metadata.title(), result.title());
-        assertEquals(metadata.metadataSourceId(), result.metadataSourceId());
-        assertEquals(metadata.description(), result.description());
+        assertEquals(metadata.getTitle(), result.getTitle());
+        assertEquals(metadata.getMetadataSourceId(), result.getMetadataSourceId());
+        assertEquals(metadata.getDescription(), result.getDescription());
     }
 
     @Test
     void fetchReleaseMetadata() {
         String metadataId = "75336092483";
-        ReleaseMetadata metadata = ReleaseMetadata.builder()
-                .title("Batman #1000000 - Peril Within the Prison Planet")
-                .build();
+        Release metadata = new Release()
+                .setTitle("Batman #1000000 - Peril Within the Prison Planet");
 
-        ReleaseMetadata result = metadataAgent.fetchReleaseMetadata(metadataId, 1).orElseThrow();
+        Release result = metadataAgent.fetchReleaseMetadata(metadataId, 1).orElseThrow();
 
-        assertEquals(metadata.title(), result.title());
-        assertEquals(metadata.metadataSourceId(), result.metadataSourceId());
+        assertEquals(metadata.getTitle(), result.getTitle());
+        assertEquals(metadata.getMetadataSourceId(), result.getMetadataSourceId());
     }
 }

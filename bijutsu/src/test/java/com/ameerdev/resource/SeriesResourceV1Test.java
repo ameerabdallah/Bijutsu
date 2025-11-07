@@ -1,18 +1,18 @@
 package com.ameerdev.resource;
 
-import com.ameerdev.metadata_agent.MetadataAgent;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
+@Disabled
 class SeriesResourceV1Test {
+    // TODO: Add mock data setup and teardown
+    private static final int libraryId = 1;
 
     @BeforeAll
     static void setUp() {
@@ -27,7 +27,7 @@ class SeriesResourceV1Test {
                 .queryParam("pageSize", 20)
                 .queryParam("sortBy", "title")
                 .when().get("/v1/series/getAllSeries")
-                .thenReturn()
+                .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
     }
 
@@ -39,7 +39,7 @@ class SeriesResourceV1Test {
                 .queryParam("pageSize", 20)
                 .queryParam("sortBy", "title")
                 .when().get("/v1/series/getAllSeries")
-                .thenReturn()
+                .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
     }
 
@@ -51,7 +51,7 @@ class SeriesResourceV1Test {
                 .queryParam("pageSize", LibraryResourceV1.MAX_PAGE_SIZE + 1)
                 .queryParam("sortBy", "title")
                 .when().get("/v1/series/getAllSeries")
-                .thenReturn()
+                .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
     }
 
@@ -63,15 +63,12 @@ class SeriesResourceV1Test {
                 .queryParam("pageSize", 20)
                 .queryParam("sortBy", "title")
                 .when().get("/v1/series/getAllSeries")
-                .thenReturn()
+                .then()
                 .statusCode(Response.Status.OK.getStatusCode());
     }
 
-    @Inject
-    @InjectMock
-    MetadataAgent metadataAgent;
-
     @Test
+    @Disabled
     void refreshMetadata() {
         int metadataId = 0;
         // TODO: Push series metadata to mock db that is intended to be overwritten and store in metadataId

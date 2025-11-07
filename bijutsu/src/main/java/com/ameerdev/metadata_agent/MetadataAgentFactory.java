@@ -1,8 +1,8 @@
 package com.ameerdev.metadata_agent;
 
+import com.ameerdev.jooq.enums.BookType;
 import com.ameerdev.metadata_agent.comicvine.ComicVineMetadataAgent;
 import com.ameerdev.metadata_agent.mangaupdates.MangaUpdatesMetadataAgent;
-import com.ameerdev.model.BookType;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;

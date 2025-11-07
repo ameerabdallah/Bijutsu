@@ -1,7 +1,7 @@
 package com.ameerdev.resource;
 
-import com.ameerdev.model.BookType;
-import com.ameerdev.model.ReadDirection;
+import com.ameerdev.jooq.enums.BookType;
+import com.ameerdev.jooq.enums.ReadDirection;
 import com.ameerdev.service.LibraryService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
