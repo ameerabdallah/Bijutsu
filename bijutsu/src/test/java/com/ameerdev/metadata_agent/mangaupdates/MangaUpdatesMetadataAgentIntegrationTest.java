@@ -1,6 +1,6 @@
 package com.ameerdev.metadata_agent.mangaupdates;
 
-import com.ameerdev.jooq.tables.pojos.Series;
+import com.ameerdev.models.Series;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Tag;
@@ -18,8 +18,8 @@ class MangaUpdatesMetadataAgentIntegrationTest {
     MangaUpdatesMetadataAgent agent;
 
     @Test
-    void searchByNameRealAPI() {
-        Optional<String> result = agent.searchByName("Chainsaw-Man");
+    void searchRealAPI() {
+        Optional<String> result = agent.search("Chainsaw-Man");
 
         assertTrue(result.isPresent(), "Should find Chainsaw Man series");
         System.out.println("Found series ID: " + result.get());

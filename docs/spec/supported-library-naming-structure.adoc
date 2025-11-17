@@ -1,0 +1,73 @@
+= Supported library naming structure
+:toc:
+
+
+== Overview
+
+When creating libraries for use in our ecosystem, it is important to follow a consistent naming structure. This ensures that libraries are easily identifiable and can be managed effectively.
+
+== Directory Structure
+
+The recommended directory structure for libraries is as follows:
+
+[source, text]
+----
+<library>
+├── <series>
+│   ├── <release1>
+│   ├── <release2>
+│   ├── <release3>
+│   ├── <release4>
+│   ├── <release5>
+│   └── ...
+└── ...
+----
+
+== Series Naming
+
+Series may be named using the following formats:
+
+[source, text]
+----
+<Series Name> (<Year>) [<Metadata ID>]/
+<Series Name> [<Metadata ID>]/
+<Series Name> (<Year>)/
+<Series Name>/
+----
+
+== Release Naming
+
+Releases within a series should follow this naming convention:
+[source, text]
+----
+<Series Name> - <Release #>.{cbz|cbr|zip|rar|pdf|epub|rar}
+<Release #>
+----
+
+Note that the most important part is the release number. We support mixed release formats,
+in the same series (useful for ongoing series)
+
+[source, text]
+----
+<Series Name> - v01.cbz/
+<Series Name> - v02.cbz/
+<Series Name> - v03.cbz/
+<Series Name> - v04.cbz/
+<Series Name> - v05.cbz/
+<Series Name> - c46.cbz/
+<Series Name> - c47.cbz/
+...
+----
+
+The release number can be in any of the following formats:
+
+[source, text]
+----
+v# (e.g., v01, v02, v03, ...)
+Volume # (e.g., Volume 1, Volume 2, Volume 3, ...)
+c# (e.g., c01, c02, c03, ...)
+Chapter # (e.g., Chapter 1, Chapter 2, Chapter 3, ...)
+# (e.g., 01, 02, 03, ...)
+----
+
+If you don't specify a format, the default is 'c#'.

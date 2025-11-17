@@ -36,7 +36,7 @@ class MangaUpdatesMetadataAgentTest {
     }
 
     @Test
-    void searchByName() throws IOException {
+    void search() throws IOException {
         SeriesSearchResponseV1 mockResponse = loadMockResponseObject(
                 "mock-responses/series/search/chainsawman.json",
                 SeriesSearchResponseV1.class
@@ -45,7 +45,7 @@ class MangaUpdatesMetadataAgentTest {
                 Optional.of(mockResponse.getResults().getFirst().getRecord().getSeriesId().toString());
         when(seriesApi.searchSeriesPost(any(SeriesSearchRequestV1.class))).thenReturn(mockResponse);
 
-        Optional<String> result = agent.searchByName("Chainsaw Man");
+        Optional<String> result = agent.search("Chainsaw Man");
 
         assertEquals(chainsawManId, result);
     }

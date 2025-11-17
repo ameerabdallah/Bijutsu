@@ -1,14 +1,14 @@
 package com.ameerdev.metadata_agent.mangaupdates;
 
-import com.ameerdev.jooq.enums.BookType;
-import com.ameerdev.jooq.tables.pojos.Release;
-import com.ameerdev.jooq.tables.pojos.Series;
 import com.ameerdev.metadata_agent.MetadataAgent;
 import com.ameerdev.metadata_agent.mangaupdates.client.api.SeriesApi;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesModelV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchRequestV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1Results;
+import com.ameerdev.models.enums.BookType;
+import com.ameerdev.models.Series;
+import com.ameerdev.models.SeriesIdentifier;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,20 +31,30 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
     }
 
     @Override
-    public Optional<String> searchByName(String name) {
+    public Optional<String> search(SeriesIdentifier seriesIdentifier) {
         var builder = SeriesSearchRequestV1.builder();
 
-        try {
-            SeriesSearchResponseV1 response = seriesApi.searchSeriesPost(builder.search(name).build());
+        var searchRequest = builder
+                .search(seriesIdentifier.getName())
+                .year(seriesIdentifier.getYear().toString())
+                .build();
 
-            return response.getResults().stream()
-                    .map(SeriesSearchResponseV1Results::getRecord)
-                    .min((record1, record2) -> {
-                        Integer record1Score = LevenshteinDistance.getDefaultInstance().apply(record1.getTitle(), name);
-                        Integer record2Score = LevenshteinDistance.getDefaultInstance().apply(record2.getTitle(), name);
-                        return record1Score.compareTo(record2Score);
-                    })
-                    .map(result -> result.getSeriesId().toString());
+        try {
+            SeriesSearchResponseV1 response =
+                    seriesApi.searchSeriesPost(searchRequest);
+
+            return response.getResults().stream().map(SeriesSearchResponseV1Results::getRecord).min((record1,
+                                                                                                     record2) -> {
+                Integer record1Score = LevenshteinDistance.getDefaultInstance().apply(
+                        record1.getTitle(),
+                        seriesIdentifier.getName()
+                );
+                Integer record2Score = LevenshteinDistance.getDefaultInstance().apply(
+                        record2.getTitle(),
+                        seriesIdentifier.getName()
+                );
+                return record1Score.compareTo(record2Score);
+            }).map(result -> result.getSeriesId().toString());
 
         } catch (Exception e) {
             return Optional.empty();
@@ -54,20 +64,12 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
     @Override
     public Optional<Series> fetchSeriesMetadata(String metadataSeriesId) {
         SeriesModelV1 response = seriesApi.retrieveSeries(Long.valueOf(metadataSeriesId), false);
-        Series series = new Series();
 
         return Optional.of(
-                series
-                        .setMetadataSourceId(String.valueOf(response.getSeriesId()))
-                        .setTitle(response.getTitle())
-                        .setReleaseYear(Integer.valueOf(response.getYear()))
-                        .setDescription(response.getDescription())
-        );
-    }
-
-    @Override
-    public Optional<Release> fetchReleaseMetadata(String metadataSeriesId, int index) {
-//        seriesApi.searchSeriesPost()
-        return Optional.empty();
+                Series.builder()
+                        .metadataSourceId(String.valueOf(response.getSeriesId()))
+                        .title(response.getTitle())
+                        .releaseYear(Integer.parseInt(response.getYear()))
+                        .description(response.getDescription()).build());
     }
 }

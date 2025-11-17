@@ -51,6 +51,8 @@ dependencies {
     implementation("io.quarkiverse.openapi.generator:quarkus-openapi-generator:2.13.0-lts")
     implementation("org.apache.commons:commons-text:1.14.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1")
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
+    implementation("org.jetbrains:annotations:26.0.2-1")
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
@@ -110,6 +112,7 @@ sourceSets {
         }
     }
 }
+
 tasks.register("jooqCodegen") {
     group = "jooq"
     description = "Generate jOOQ sources using Testcontainers"
@@ -147,18 +150,14 @@ tasks.register("jooqCodegen") {
                         .withDatabase(
                             Database()
                                 .withName("org.jooq.meta.postgres.PostgresDatabase")
-                                .withIncludes(".*")
-                                .withExcludes("")
                                 .withInputSchema("public")
                         ).withGenerate(
                             Generate()
-                                .withRecords(true)
-                                .withPojos(true)
-                                .withFluentSetters(true)
-                        )
-                        .withTarget(
+                                .withDaos(true)
+                        ).withTarget(
                             Target()
-                                .withPackageName("com.ameerdev.jooq")
+                                .withClean(true)
+                                .withPackageName("com.ameerdev.jooq.generated")
                                 .withDirectory(jooqGeneratedSourcesDir)
                         )
                 )

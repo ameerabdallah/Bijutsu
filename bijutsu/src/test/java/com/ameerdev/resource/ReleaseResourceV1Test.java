@@ -1,9 +1,6 @@
 package com.ameerdev.resource;
 
-import com.ameerdev.metadata_agent.MetadataAgent;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

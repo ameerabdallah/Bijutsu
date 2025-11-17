@@ -1,8 +1,9 @@
 package com.ameerdev.metadata_agent;
 
-import com.ameerdev.jooq.enums.BookType;
-import com.ameerdev.jooq.tables.pojos.Release;
-import com.ameerdev.jooq.tables.pojos.Series;
+import com.ameerdev.models.enums.BookType;
+import com.ameerdev.models.Release;
+import com.ameerdev.models.Series;
+import com.ameerdev.models.SeriesIdentifier;
 import jakarta.annotation.Nonnull;
 
 import java.util.Optional;
@@ -12,15 +13,20 @@ public interface MetadataAgent {
     BookType metadataType();
 
     /**
-     * @param name expects an already parsed name
+     * Search for a metadata source's ID using the provided series identifier.
+     *
      * @return Metadata source's ID. If multiple results are found, return the result that best matches.
      */
-    Optional<String> searchByName(String name);
+    Optional<String> search(SeriesIdentifier seriesIdentifier);
 
     Optional<Series> fetchSeriesMetadata(String metadataSeriesId);
 
     default Optional<Release> fetchReleaseMetadata(String metadataSeriesId, int index) {
-        Release release = new Release();
-        return Optional.of(release.setTitle("Chapter " + index).setIndex(index));
+        return Optional.of(
+                Release.builder()
+                        .title("Chapter " + index)
+                        .index(index)
+                        .build()
+        );
     }
 }

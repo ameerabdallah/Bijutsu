@@ -1,7 +1,8 @@
 package com.ameerdev.resource;
 
-import com.ameerdev.jooq.enums.BookType;
-import com.ameerdev.jooq.enums.ReadDirection;
+import com.ameerdev.models.enums.BookType;
+import com.ameerdev.models.enums.ReadDirection;
+import com.ameerdev.resource.dto.request.CreateLibraryDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,14 +25,14 @@ class LibraryResourceV1Test {
     @Test
     @Disabled
     void createNewLibrary() {
-        LibraryResourceV1.CreateLibrary createLibraryBody = new LibraryResourceV1.CreateLibrary("Manga", "Manga Library", ReadDirection.DEFAULT, BookType.MANGA);
-
-        given()
-                .when().post("/v1/library/", createLibraryBody)
-                .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
-                .body(any(Integer.class)); // return the new library id
-
+//        CreateLibraryDTO createLibraryBody = new CreateLibraryDTO("Manga", "Manga Library", ReadDirection.DEFAULT, BookType.MANGA);
+//
+//        given()
+//                .when().post("/v1/library/", createLibraryBody)
+//                .then()
+//                .statusCode(Response.Status.CREATED.getStatusCode())
+//                .body(any(Integer.class)); // return the new library id
+//
         // ensure that the mock db has the new library
     }
 

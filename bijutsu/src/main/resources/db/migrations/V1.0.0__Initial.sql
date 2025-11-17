@@ -1,5 +1,7 @@
 CREATE TYPE read_direction AS ENUM ('DEFAULT', 'LTR', 'RTL');
 CREATE TYPE book_type AS ENUM ('MANGA', 'COMIC');
+CREATE TYPE series_type as ENUM ('ONE_SHOT', 'SERIES');
+CREATE TYPE release_type AS ENUM ('CHAPTER', 'VOLUME', 'BOOK');
 COMMIT;
 
 CREATE TABLE library
@@ -8,7 +10,8 @@ CREATE TABLE library
     name           VARCHAR(255)                     NOT NULL,
     description    TEXT           DEFAULT ''        NOT NULL,
     read_direction read_direction DEFAULT 'DEFAULT' NOT NULL,
-    book_type      book_type                        NOT NULL
+    book_type      book_type                        NOT NULL,
+    series_type    series_type                      NOT NULL
 );
 
 CREATE TABLE library_directory
@@ -39,5 +42,6 @@ CREATE TABLE release
     title              VARCHAR(255) NOT NULL,
     index              INTEGER      NOT NULL,
     release_date       DATE,
+    release_type       release_type NOT NULL,
     metadata_source_id VARCHAR(255)
 );

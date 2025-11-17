@@ -1,9 +1,10 @@
 package com.ameerdev.metadata_agent.comicvine;
 
-import com.ameerdev.jooq.enums.BookType;
-import com.ameerdev.jooq.tables.pojos.Release;
-import com.ameerdev.jooq.tables.pojos.Series;
 import com.ameerdev.metadata_agent.MetadataAgent;
+import com.ameerdev.models.enums.BookType;
+import com.ameerdev.models.Release;
+import com.ameerdev.models.Series;
+import com.ameerdev.models.SeriesIdentifier;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -19,7 +20,7 @@ public class ComicVineMetadataAgent implements MetadataAgent {
     }
 
     @Override
-    public Optional<String> searchByName(String name) {
+    public Optional<String> search(SeriesIdentifier name) {
         return Optional.empty();
     }
 
