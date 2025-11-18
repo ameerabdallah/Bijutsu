@@ -32,7 +32,7 @@ class ComicVineMetadataAgentTest {
 //                .thenReturn(mockResponse);
         String batmanId = "<placeholder>";
 
-        String result = metadataAgent.search(new SeriesIdentifier().setName("Batman")).orElseThrow();
+        String result = metadataAgent.search(SeriesIdentifier.builder().title("Batman").build()).orElseThrow();
 
         assertEquals(batmanId, result);
     }

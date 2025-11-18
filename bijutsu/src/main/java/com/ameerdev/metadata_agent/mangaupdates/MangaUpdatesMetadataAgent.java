@@ -6,9 +6,9 @@ import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesModelV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchRequestV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1Results;
-import com.ameerdev.models.enums.BookType;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.enums.BookType;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,10 +34,15 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
     public Optional<String> search(SeriesIdentifier seriesIdentifier) {
         var builder = SeriesSearchRequestV1.builder();
 
-        var searchRequest = builder
-                .search(seriesIdentifier.getName())
-                .year(seriesIdentifier.getYear().toString())
-                .build();
+        if (seriesIdentifier.getYear() != null) {
+            builder.year(seriesIdentifier.getYear().toString());
+        }
+
+        if (seriesIdentifier.getTitle() != null) {
+            builder.search(seriesIdentifier.getTitle());
+        }
+
+        SeriesSearchRequestV1 searchRequest = builder.build();
 
         try {
             SeriesSearchResponseV1 response =
@@ -47,11 +52,11 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
                                                                                                      record2) -> {
                 Integer record1Score = LevenshteinDistance.getDefaultInstance().apply(
                         record1.getTitle(),
-                        seriesIdentifier.getName()
+                        seriesIdentifier.getTitle()
                 );
                 Integer record2Score = LevenshteinDistance.getDefaultInstance().apply(
                         record2.getTitle(),
-                        seriesIdentifier.getName()
+                        seriesIdentifier.getTitle()
                 );
                 return record1Score.compareTo(record2Score);
             }).map(result -> result.getSeriesId().toString());
@@ -70,6 +75,7 @@ public class MangaUpdatesMetadataAgent implements MetadataAgent {
                         .metadataSourceId(String.valueOf(response.getSeriesId()))
                         .title(response.getTitle())
                         .releaseYear(Integer.parseInt(response.getYear()))
-                        .description(response.getDescription()).build());
+                        .description(response.getDescription()).build()
+        );
     }
 }

@@ -1,5 +1,7 @@
 package com.ameerdev.resource;
 
+import com.ameerdev.models.Library;
+import com.ameerdev.resource.dto.mappers.RequestMappers;
 import com.ameerdev.resource.dto.request.CreateLibraryDTO;
 import com.ameerdev.service.LibraryService;
 import jakarta.inject.Inject;
@@ -17,7 +19,7 @@ public class LibraryResourceV1 {
 
     @POST
     public Response createNewLibrary(CreateLibraryDTO library) {
-        Optional<CreateLibraryDTO> result  = service.createNewLibrary(library);
+        Optional<Library> result = service.createNewLibrary(RequestMappers.toLibrary(library));
         if (result.isPresent()) {
             return Response.status(Response.Status.CREATED).entity(result).build();
         } else {

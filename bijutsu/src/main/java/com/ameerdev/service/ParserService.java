@@ -14,5 +14,6 @@ public class ParserService {
         if (name.endsWith(")")) {
             int openParenIndex = name.lastIndexOf('(');
         }
+        return null;
     }
 }

@@ -1,11 +1,12 @@
 package com.ameerdev.metadata_agent.mangaupdates;
 
-import com.ameerdev.jooq.enums.BookType;
-import com.ameerdev.jooq.tables.pojos.Series;
 import com.ameerdev.metadata_agent.mangaupdates.client.api.SeriesApi;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesModelV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchRequestV1;
 import com.ameerdev.metadata_agent.mangaupdates.client.model.SeriesSearchResponseV1;
+import com.ameerdev.models.Series;
+import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.enums.BookType;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -45,7 +46,22 @@ class MangaUpdatesMetadataAgentTest {
                 Optional.of(mockResponse.getResults().getFirst().getRecord().getSeriesId().toString());
         when(seriesApi.searchSeriesPost(any(SeriesSearchRequestV1.class))).thenReturn(mockResponse);
 
-        Optional<String> result = agent.search("Chainsaw Man");
+        Optional<String> result = agent.search(SeriesIdentifier.builder().title("Chainsaw-Man").build());
+
+        assertEquals(chainsawManId, result);
+    }
+
+    @Test
+    void searchWithYear() throws IOException {
+        SeriesSearchResponseV1 mockResponse = loadMockResponseObject(
+                "mock-responses/series/search/chainsawman+year.json",
+                SeriesSearchResponseV1.class
+        );
+        Optional<String> chainsawManId =
+                Optional.of(mockResponse.getResults().getFirst().getRecord().getSeriesId().toString());
+        when(seriesApi.searchSeriesPost(any(SeriesSearchRequestV1.class))).thenReturn(mockResponse);
+
+        Optional<String> result = agent.search(SeriesIdentifier.builder().title("Chainsaw-Man").year(2018).build());
 
         assertEquals(chainsawManId, result);
     }
@@ -59,8 +75,11 @@ class MangaUpdatesMetadataAgentTest {
         );
         when(seriesApi.retrieveSeries(Long.valueOf(metadataId), false)).thenReturn(mockResponse);
 
-        Series expected = new Series().setTitle(mockResponse.getTitle()).setMetadataSourceId(metadataId).setDescription(
-                mockResponse.getDescription());
+        Series expected = Series.builder()
+                .title(mockResponse.getTitle())
+                .metadataSourceId(metadataId)
+                .description(mockResponse.getDescription())
+                .build();
 
         Series result = agent.fetchSeriesMetadata(metadataId).orElseThrow();
 

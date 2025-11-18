@@ -1,14 +1,18 @@
 package com.ameerdev.models;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
 public class SeriesIdentifier {
-    private String id;
-    private String name;
+    @Nullable
+    private String metadataSourceId;
+    @Nullable
+    private String title;
+    @Nullable
     private Integer year;
 }
