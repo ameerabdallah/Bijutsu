@@ -14,13 +14,13 @@ public class LibraryService {
     LibraryRepository repository;
 
     @Inject
-    ScannerService scanService;
+    LibraryScannerService scanService;
 
     public void performLibraryScan(long libraryId) {
-        Optional<Library> library = repository.getLibraryById(libraryId);
+        Optional<Library> library = repository.fetchLibraryById(libraryId);
 
         library.ifPresent(lib -> {
-            scanService.scanLibrary(lib.getId(), lib.getPaths(), lib.getBookType());
+            scanService.scanLibrary(lib.getId(), lib.getPaths(), lib.getBookType(), lib.getSeriesType());
         });
     }
 
@@ -29,7 +29,7 @@ public class LibraryService {
 
         return createdLibrary.map(record -> {
             // we assume that the paths were created successfully along with the library
-            scanService.scanLibrary(record.getId(), library.getPaths(), record.getBookType());
+            scanService.scanLibrary(record.getId(), library.getPaths(), record.getBookType(), record.getSeriesType());
 
             return record;
         });

@@ -43,7 +43,7 @@ public class MetadataAgentFactory {
         agentMap.computeIfAbsent(BookType.MANGA, k -> new MangaUpdatesMetadataAgent());
     }
 
-    public @Nonnull MetadataAgent getAgent(BookType libraryType) {
-        return agentMap.get(libraryType);
+    public @Nonnull MetadataAgent getAgent(BookType bookType) {
+        return agentMap.get(bookType);
     }
 }

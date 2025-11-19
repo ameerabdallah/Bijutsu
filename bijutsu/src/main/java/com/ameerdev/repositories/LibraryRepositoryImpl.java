@@ -23,7 +23,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     DSLContext dsl;
 
     @Override
-    public List<Library> getAllLibraries() {
+    public List<Library> fetchAllLibraries() {
         return dsl.select(LIBRARY.asterisk())
                 .select(
                         DSL.multiset(
@@ -37,7 +37,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     }
 
     @Override
-    public List<String> getLibraryPaths(long libraryId) {
+    public List<String> fetchLibraryPaths(long libraryId) {
         return dsl.select(LIBRARY.libraryDirectory().PATH)
                 .from(LIBRARY.libraryDirectory())
                 .where(
@@ -48,7 +48,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     }
 
     @Override
-    public Optional<Library> getLibraryById(long libraryId) {
+    public Optional<Library> fetchLibraryById(long libraryId) {
         return dsl.selectFrom(LIBRARY)
                 .where(LIBRARY.ID.eq(libraryId))
                 .fetchOptionalInto(Library.class);

@@ -10,27 +10,26 @@ public interface LibraryRepository {
      * Retrieve all library records from the database.
      * @return a list of all LibraryRecord objects
      */
-    List<Library> getAllLibraries();
+    List<Library> fetchAllLibraries();
 
     /**
      * Retrieve all paths associated with a specific library ID.
      * @param libraryId the ID of the library
      * @return a list of paths associated with the library
      */
-    List<String> getLibraryPaths(long libraryId);
+    List<String> fetchLibraryPaths(long libraryId);
 
     /**
      * Retrieve a library record by its ID.
      * @param libraryId the ID of the library
      * @return an Optional containing the LibraryRecord if found, or an empty Optional if not found
      */
-    Optional<Library> getLibraryById(long libraryId);
+    Optional<Library> fetchLibraryById(long libraryId);
 
     /**
      * Create a new library record in the database. Also creates the necessary directory records.
-     * @param libraryRecord the library record to be created
-     * @param paths list of paths to be associated with the library
+     * @param library the library to be created
      * @return the created library record wrapped in an Optional, or an empty Optional if creation failed
      */
-    Optional<Library> createLibrary(Library libraryRecord);
+    Optional<Library> createLibrary(Library library);
 }

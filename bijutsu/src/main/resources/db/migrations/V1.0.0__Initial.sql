@@ -7,7 +7,7 @@ COMMIT;
 CREATE TABLE library
 (
     id             BIGSERIAL PRIMARY KEY,
-    name           VARCHAR(255)                     NOT NULL,
+    name           VARCHAR(255)   UNIQUE            NOT NULL,
     description    TEXT           DEFAULT ''        NOT NULL,
     read_direction read_direction DEFAULT 'DEFAULT' NOT NULL,
     book_type      book_type                        NOT NULL,
