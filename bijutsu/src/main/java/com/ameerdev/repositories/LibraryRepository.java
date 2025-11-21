@@ -31,5 +31,5 @@ public interface LibraryRepository {
      * @param library the library to be created
      * @return the created library record wrapped in an Optional, or an empty Optional if creation failed
      */
-    Optional<Library> createLibrary(Library library);
+    Optional<Library> create(Library library);
 }

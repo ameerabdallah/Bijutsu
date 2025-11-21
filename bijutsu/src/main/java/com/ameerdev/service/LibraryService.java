@@ -25,7 +25,7 @@ public class LibraryService {
     }
 
     public Optional<Library> createNewLibrary(Library library) {
-        Optional<Library> createdLibrary = repository.createLibrary(library);
+        Optional<Library> createdLibrary = repository.create(library);
 
         return createdLibrary.map(record -> {
             // we assume that the paths were created successfully along with the library

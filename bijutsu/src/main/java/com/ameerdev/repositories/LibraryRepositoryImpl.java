@@ -55,7 +55,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     }
 
     @Override
-    public Optional<Library> createLibrary(Library library) {
+    public Optional<Library> create(Library library) {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 

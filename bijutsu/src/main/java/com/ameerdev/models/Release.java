@@ -18,4 +18,5 @@ public class Release {
     private LocalDate releaseDate;
     private ReleaseType releaseType;
     private String metadataSourceId;
+    private long seriesId;
 }
