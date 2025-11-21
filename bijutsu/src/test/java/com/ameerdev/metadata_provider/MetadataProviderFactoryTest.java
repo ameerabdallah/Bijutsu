@@ -1,0 +1,38 @@
+package com.ameerdev.metadata_provider;
+
+import com.ameerdev.metadata_provider.comicvine.ComicVineMetadataProvider;
+import com.ameerdev.metadata_provider.mangaupdates.MangaUpdatesMetadataProvider;
+import com.ameerdev.models.enums.BookType;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+@QuarkusTest
+public class MetadataProviderFactoryTest {
+    @Inject
+    MetadataProviderFactory testMetadataProviderFactory;
+
+    @Test
+    public void testDefaultMetadataProviderComics() {
+        MetadataProvider metadataProvider = testMetadataProviderFactory.getProvider(BookType.COMIC);
+
+        assertInstanceOf(ComicVineMetadataProvider.class, metadataProvider);
+    }
+
+    @Test
+    public void testDefaultMetadataProviderManga() {
+        MetadataProvider metadataProvider = testMetadataProviderFactory.getProvider(BookType.MANGA);
+
+        assertInstanceOf(MangaUpdatesMetadataProvider.class, metadataProvider);
+    }
+
+    @Test
+    public void testMetadataProviderCorrectMetadataType() {
+        MetadataProvider mangaProvider = testMetadataProviderFactory.getProvider(BookType.MANGA);
+        MetadataProvider comicsProvider = testMetadataProviderFactory.getProvider(BookType.COMIC);
+
+        assertEquals(BookType.MANGA, mangaProvider.metadataType());
+        assertEquals(BookType.COMIC, comicsProvider.metadataType());
+    }
+}

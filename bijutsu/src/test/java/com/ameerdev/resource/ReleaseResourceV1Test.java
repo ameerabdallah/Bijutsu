@@ -14,7 +14,7 @@ class ReleaseResourceV1Test {
 
 //    @Inject
 //    @InjectMock
-//    MetadataAgent metadataAgent;
+//    MetadataProvider metadataProvider;
 
     @Test
     @Disabled

@@ -164,14 +164,14 @@ package com.ameerdev {
 
 
 ' Information gathered from external sources about the series and Releases
-    package metadata_agent {
+    package metadata_provider {
 
-        class MetadataAgentFactory {
-            - metadataAgent: MetadataAgent
-            + getAgentInstance(libraryType: LibraryType): MetadataAgent
+        class MetadataProviderFactory {
+            - metadataProvider: MetadataProvider
+            + getProviderInstance(libraryType: LibraryType): MetadataProvider
         }
 
-        interface MetadataAgent {
+        interface MetadataProvider {
             - metadataType: BookType
             - metadataSourceApiUrl: Optional<String>
             + searchByName(name: String): Optional<String>
@@ -179,30 +179,30 @@ package com.ameerdev {
             + fetchReleaseMetadata(metadataSeriesId: String, index: String): Optional<ReleaseMetadata>
         }
 
-        MetadataAgentFactory .. MetadataAgent
+        MetadataProviderFactory .. MetadataProvider
 
         package mangaupdates {
             package client {
                 class SeriesApi{
                 }
             }
-            class MangaUpdatesMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
+            class MangaUpdatesMetadataProvider implements com.ameerdev.metadata_provider.MetadataProvider {
                 seriesApi: SeriesApi (injected)
             }
-            client.SeriesApi . MangaUpdatesMetadataAgent
+            client.SeriesApi . MangaUpdatesMetadataProvider
         }
 
         package comicvine {
             package client {
             }
-            class ComicVineMetadataAgent implements com.ameerdev.metadata_agent.MetadataAgent {
+            class ComicVineMetadataProvider implements com.ameerdev.metadata_provider.MetadataProvider {
                 seriesApi: SeriesApi (injected)
             }
-            client.SeriesApi . ComicVineMetadataAgent
+            client.SeriesApi . ComicVineMetadataProvider
         }
 
-        MetadataAgent .. com.ameerdev.model.media.SeriesMetadata
-        MetadataAgent .. com.ameerdev.model.media.ReleaseMetadata
+        MetadataProvider .. com.ameerdev.model.media.SeriesMetadata
+        MetadataProvider .. com.ameerdev.model.media.ReleaseMetadata
     }
 
     model.media.Library "1" -- "0..*" model.media.Series

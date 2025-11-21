@@ -1,7 +1,7 @@
 package com.ameerdev.service;
 
-import com.ameerdev.metadata_agent.MetadataAgent;
-import com.ameerdev.metadata_agent.MetadataAgentFactory;
+import com.ameerdev.metadata_provider.MetadataProvider;
+import com.ameerdev.metadata_provider.MetadataProviderFactory;
 import com.ameerdev.models.Library;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +37,7 @@ public class LibraryScannerService {
     ReleaseRepository releaseRepository;
 
     @Inject
-    MetadataAgentFactory metadataAgentFactory;
+    MetadataProviderFactory metadataProviderFactory;
 
     @Inject
     SeriesParserService seriesParserService;
@@ -52,7 +51,7 @@ public class LibraryScannerService {
     }
 
     public void scanLibraryPath(Library library, Path path) {
-        MetadataAgent metadataAgent = metadataAgentFactory.getAgent(library.getBookType());
+        MetadataProvider metadataProvider = metadataProviderFactory.getProvider(library.getBookType());
 
         // get each subdirectory in the path and scan it as a series
         List<Path> subDirectories;
@@ -76,21 +75,21 @@ public class LibraryScannerService {
                     );
                 }
 
-                String metadataSourceId = metadataAgent.search(seriesIdentifier);
+                String metadataSourceId = metadataProvider.search(seriesIdentifier);
 
             }
         }
     }
 
     private void scanSeries(Library library, Series series, Path path) {
-        MetadataAgent metadataAgent = metadataAgentFactory.getAgent(library.getBookType());
+        MetadataProvider metadataProvider = metadataProviderFactory.getProvider(library.getBookType());
         // Placeholder for scanning logic
         log.info(
-                "Scanning {} in library ID: {} at path: {} with agent: {}",
+                "Scanning {} in library ID: {} at path: {} with provider: {}",
                 library.getSeriesType().displayName,
                 library.getId(),
                 path,
-                metadataAgent.getClass().getSimpleName()
+                metadataProvider.getClass().getSimpleName()
         );
 
     }
