@@ -168,20 +168,20 @@ public class LibraryScannerService {
 
     private void scanSeries(Library library, Path path) {
         MetadataProvider metadataProvider = metadataProviderFactory.getProvider(library.getBookType());
-        // Placeholder for scanning logic
-        log.info(
-                "Scanning {} in library ID: {} at path: {} with provider: {}",
-                library.getSeriesType().displayName,
-                library.getId(),
-                path,
-                metadataProvider.getClass().getSimpleName()
-        );
-
         SeriesIdentifier seriesIdentifier = parserService.parseSeriesName(String.valueOf(path.getFileName()));
         Optional<String> metadataId = metadataProvider.search(seriesIdentifier);
         if (metadataId.isEmpty()) {
             log.warn("No metadata found for series at path: {}", path);
         }
+        Optional<Series> series = seriesRepository.create(
+                Series.builder()
+                        .libraryId(library.getId())
+                        .metadataSourceId(metadataId.orElse(null))
+                        .path(path.toString())
+                        .build()
+        );
+
+        series.ifPresent(s -> scanSeries(library, s));
     }
 
     private void scanSeries(Library library, Series series) {
@@ -195,13 +195,15 @@ public class LibraryScannerService {
                 metadataProvider.getClass().getSimpleName()
         );
 
-        Optional<String> metadataId = metadataProvider.search(
-                new SeriesIdentifier(
-                        series.getMetadataSourceId(),
-                        series.getTitle(),
-                        series.getReleaseYear()
-                )
-        );
+        if (series.getMetadataSourceId().isPresent()) {
+            Optional<com.ameerdev.models.Series> metadata = metadataProvider.fetchSeriesMetadata(series.getMetadataSourceId().get());
+            metadata.ifPresent(meta -> {
+                meta.setLibraryId(series.getLibraryId());
+                meta.setPath(series.getPath());
+                meta.setId(series.getId());
+                seriesRepository.update(meta);
+            });
+        }
 
     }
 

@@ -8,6 +8,8 @@ import java.util.Optional;
 @NoArgsConstructor
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 @AllArgsConstructor
 public class SeriesIdentifier {
     @Nullable

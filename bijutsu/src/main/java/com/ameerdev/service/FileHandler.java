@@ -10,6 +10,10 @@ import java.util.stream.Stream;
  * All methods should be mocked during unit testing to avoid direct file system access.
  */
 public class FileHandler {
+    private FileHandler() {
+        // Private constructor to prevent instantiation
+    }
+
     public static Stream<Path> list(Path directory) throws IOException {
         return Files.list(directory);
     }

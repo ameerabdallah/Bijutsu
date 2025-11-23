@@ -2,7 +2,7 @@ package com.ameerdev.models;
 
 import lombok.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -18,4 +18,8 @@ public class Series {
     private String description;
     private Integer releaseYear;
     private String metadataSourceId;
+
+    public Optional<String> getMetadataSourceId() {
+        return Optional.ofNullable(metadataSourceId);
+    }
 }
