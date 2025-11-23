@@ -18,6 +18,7 @@ public class SeriesResourceV1 {
             @QueryParam("pageSize") @DefaultValue("10") int pageSize,
             @QueryParam("sortBy") @DefaultValue("title") String sortBy
     ) {
+
         return Response.serverError().status(Response.Status.NOT_IMPLEMENTED).build();
     }
 

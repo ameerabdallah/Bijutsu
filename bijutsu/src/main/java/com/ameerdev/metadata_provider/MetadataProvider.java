@@ -14,6 +14,9 @@ public interface MetadataProvider {
 
     /**
      * Search for a metadata source's ID using the provided series identifier.
+     * If the series identifier contains a metadata source ID, the ID should be verified
+     * from upstream and returned if valid. Otherwise, a search should be performed using the
+     * other available information.
      *
      * @return Metadata source's ID. If multiple results are found, return the result that best matches.
      */

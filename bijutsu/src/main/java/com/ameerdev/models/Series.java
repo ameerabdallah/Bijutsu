@@ -2,6 +2,8 @@ package com.ameerdev.models;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +16,6 @@ public class Series {
     private String title;
     private String author;
     private String description;
-    private int releaseYear;
+    private Integer releaseYear;
     private String metadataSourceId;
 }

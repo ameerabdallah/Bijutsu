@@ -17,21 +17,21 @@ public class LibraryService {
     LibraryScannerService scanService;
 
     public void performLibraryScan(long libraryId) {
-        Optional<Library> library = repository.fetchLibraryById(libraryId);
+        Optional<Library> fetchedLibrary = repository.fetchLibraryById(libraryId);
 
-        library.ifPresent(lib -> {
-            scanService.scanLibrary(lib.getId(), lib.getPaths(), lib.getBookType(), lib.getSeriesType());
+        fetchedLibrary.ifPresent(library -> {
+            scanService.scanLibrary(library);
         });
     }
 
     public Optional<Library> createNewLibrary(Library library) {
         Optional<Library> createdLibrary = repository.create(library);
 
-        return createdLibrary.map(record -> {
+        return createdLibrary.map(newLibrary -> {
             // we assume that the paths were created successfully along with the library
-            scanService.scanLibrary(record.getId(), library.getPaths(), record.getBookType(), record.getSeriesType());
+            scanService.scanLibrary(newLibrary);
 
-            return record;
+            return newLibrary;
         });
     }
 }

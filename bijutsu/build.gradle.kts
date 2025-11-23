@@ -47,12 +47,13 @@ dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-rest")
+    implementation("io.quarkus:quarkus-cache")
     implementation("io.quarkus:quarkus-rest-client-jackson")
     implementation("io.quarkiverse.openapi.generator:quarkus-openapi-generator:2.13.0-lts")
     implementation("org.apache.commons:commons-text:1.14.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1")
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations
     implementation("org.jetbrains:annotations:26.0.2-1")
+    implementation("io.quarkus:quarkus-smallrye-context-propagation")
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
@@ -61,6 +62,8 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("org.mockito:mockito-core:5.20.0") // core library
+
+
 
     // Flyway specific dependencies
     implementation("io.quarkus:quarkus-flyway")

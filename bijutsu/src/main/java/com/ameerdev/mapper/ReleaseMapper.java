@@ -21,7 +21,8 @@ public class ReleaseMapper implements RecordMapper<Record, Release> {
                 record.get(RELEASE.FILE_PATH, String.class),
                 record.get(RELEASE.RELEASE_DATE, LocalDate.class),
                 toDomainReleaseType(record.get(RELEASE.RELEASE_TYPE, ReleaseType.class)),
-                record.get(RELEASE.METADATA_SOURCE_ID, String.class)
+                record.get(RELEASE.METADATA_SOURCE_ID, String.class),
+                record.get(RELEASE.SERIES_ID, Long.class)
         );
     }
 }
