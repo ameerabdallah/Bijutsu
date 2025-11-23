@@ -5,6 +5,7 @@ import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.Optional;
 
@@ -24,10 +25,10 @@ public interface MetadataProvider {
 
     Optional<Series> fetchSeriesMetadata(String metadataSeriesId);
 
-    default Optional<Release> fetchReleaseMetadata(String metadataSeriesId, int index) {
+    default Optional<Release> fetchReleaseMetadata(@Nullable String metadataSeriesId, int index) {
         return Optional.of(
                 Release.builder()
-                        .title("Chapter " + index)
+                        .title("Release #" + index)
                         .index(index)
                         .build()
         );

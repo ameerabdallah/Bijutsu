@@ -3,8 +3,10 @@ package com.ameerdev.service;
 import com.ameerdev.metadata_provider.MetadataProvider;
 import com.ameerdev.metadata_provider.MetadataProviderFactory;
 import com.ameerdev.models.Library;
+import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.enums.ReleaseType;
 import com.ameerdev.repositories.LibraryRepository;
 import com.ameerdev.repositories.ReleaseRepository;
 import com.ameerdev.repositories.SeriesRepository;
@@ -16,12 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @ApplicationScoped
@@ -41,6 +42,11 @@ public class LibraryScannerService {
     ParserService parserService;
     @Inject
     ManagedExecutor executor;
+
+    public void scanLibrary(Long libraryId) {
+        Optional<Library> libraryOpt = libraryRepository.fetchLibraryById(libraryId);
+        libraryOpt.ifPresent(this::scanLibrary);
+    }
 
     public void scanLibrary(Library library) {
         Long libraryId = library.getId();
@@ -77,7 +83,7 @@ public class LibraryScannerService {
         return CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> handleRemovedSeries(data), executor),
                 CompletableFuture.runAsync(() -> handleNewSeries(data, library), executor),
-                CompletableFuture.runAsync(() -> handleExistingSeries(data), executor)
+                CompletableFuture.runAsync(() -> handleExistingSeries(data, library), executor)
         );
     }
 
@@ -93,16 +99,16 @@ public class LibraryScannerService {
         return new SeriesScanData(fileSystemSeriesPaths, repoSeriesPaths);
     }
 
-    private void handleExistingSeries(SeriesScanData scanData) {
+    private void handleExistingSeries(SeriesScanData scanData, Library library) {
         List<Series> existingSeriesPaths = scanData.repoSeriesPaths()
                 .stream()
                 .filter(series -> scanData.fileSystemSeriesPaths().contains(series.getPath()))
                 .toList();
 
-        for (Series seriesPath : existingSeriesPaths) {
+        for (Series series : existingSeriesPaths) {
             // For existing series, we might want to rescan or update metadata
-            log.info("Existing series found at path: {}", seriesPath);
-            // Placeholder for additional logic if needed
+            log.info("Existing series found at path: {}", series);
+            scanSeries(library, series);
         }
     }
 
@@ -127,7 +133,7 @@ public class LibraryScannerService {
                 .map(Series::getId)
                 .toList();
 
-        seriesRepository.deleteBySeriesIds(seriesIdsToRemove);
+        seriesRepository.deleteByIds(seriesIdsToRemove);
     }
 
     private Set<String> getSeriesPaths(Path of) {
@@ -178,6 +184,7 @@ public class LibraryScannerService {
                         .libraryId(library.getId())
                         .metadataSourceId(metadataId.orElse(null))
                         .path(path.toString())
+                        .title(path.toString()) // Temporary title; will be updated after fetching metadata
                         .build()
         );
 
@@ -196,7 +203,7 @@ public class LibraryScannerService {
         );
 
         if (series.getMetadataSourceId().isPresent()) {
-            Optional<com.ameerdev.models.Series> metadata = metadataProvider.fetchSeriesMetadata(series.getMetadataSourceId().get());
+            Optional<Series> metadata = metadataProvider.fetchSeriesMetadata(series.getMetadataSourceId().get());
             metadata.ifPresent(meta -> {
                 meta.setLibraryId(series.getLibraryId());
                 meta.setPath(series.getPath());
@@ -205,6 +212,87 @@ public class LibraryScannerService {
             });
         }
 
+        // diff found files with existing releases
+        Set<Path> files = findAllReleaseFiles(series);
+        List<Release> existingReleases = releaseRepository.findBySeriesId(series.getId());
+
+        List<Long> releasesToRemove = existingReleases.stream()
+                .filter(release -> files.stream()
+                        .noneMatch(file -> file.toString().equals(release.getFilePath()))
+                )
+                .map(Release::getId)
+                .toList();
+
+        releaseRepository.deleteByIds(releasesToRemove);
+
+        Set<String> existingFilePaths = existingReleases.stream()
+                .map(Release::getFilePath)
+                .collect(Collectors.toSet());
+
+        List<Path> newFiles = files.stream()
+                .filter(file -> !existingFilePaths.contains(file.toString()))
+                .toList();
+
+        List<Release> newReleases = new ArrayList<>();
+        for (Path file : newFiles) {
+            Release release = Release.builder()
+                    .seriesId(series.getId())
+                    .releaseType(ReleaseType.CHAPTER)
+                    .title(file.getFileName().toString())
+                    .index(-1) // index is unknown at this point
+                    .filePath(file.toString())
+                    .build();
+
+            newReleases.add(release);
+        }
+        newReleases = releaseRepository.createBatch(newReleases);
+
+        existingReleases.addAll(newReleases);
+
+        // re-index all releases
+        existingReleases = existingReleases.stream()
+                .sorted(Comparator.comparing(Release::getFilePath))
+                .toList();
+
+        for (int i = 0; i < existingReleases.size(); i++) {
+            Release release = existingReleases.get(i);
+            release.setIndex(i + 1);
+            series.getMetadataSourceId().ifPresent(
+                    id -> {
+                        Optional<Release> metadataRelease = metadataProvider.fetchReleaseMetadata(id, release.getIndex());
+                        if (metadataRelease.isPresent()) {
+                            release.setTitle(metadataRelease.get().getTitle());
+                            release.setMetadataSourceId(metadataRelease.get().getMetadataSourceId());
+                        }
+                    }
+            );
+        }
+
+        releaseRepository.updateBatch(existingReleases);
     }
 
+    private Set<Path> findAllReleaseFiles(Series series) {
+        Set<Path> releaseFiles;
+        try (Stream<Path> files = FileHandler.walk(Path.of(series.getPath()))) {
+            releaseFiles = files
+                    .filter(FileHandler::isRegularFile)
+                    .filter(this::hasSupportedExtension)
+                    .filter(file -> !FileHandler.isHidden(file))
+                    .filter(FileHandler::isReadable)
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return releaseFiles;
+    }
+
+    public boolean hasSupportedExtension(Path path) {
+        String fileName = path.getFileName().toString().toLowerCase();
+        for (String ext : SUPPORTED_FILE_EXTENSIONS) {
+            if (fileName.endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

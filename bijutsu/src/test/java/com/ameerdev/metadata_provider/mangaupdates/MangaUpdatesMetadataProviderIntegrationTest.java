@@ -4,6 +4,7 @@ import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
+@Tag("integration")
 class MangaUpdatesMetadataProviderIntegrationTest {
 
     @Inject

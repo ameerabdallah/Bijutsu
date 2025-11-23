@@ -5,7 +5,10 @@ import com.ameerdev.models.Release;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,10 +62,47 @@ public class ReleaseRepositoryImpl implements ReleaseRepository {
     }
 
     @Override
+    public List<Release> createBatch(Collection<Release> releases) {
+        // Build values manually, excluding ID
+        Field<?>[] fieldsWithoutId = Arrays.stream(RELEASE.fields())
+                .filter(f -> !f.equals(RELEASE.ID))
+                .toArray(Field[]::new);
+
+        var insert = dsl.insertInto(RELEASE, fieldsWithoutId);
+
+        for (Release release : releases) {
+            ReleaseRecord record = dsl.newRecord(RELEASE);
+            fillRecordFromDomain(release, record);
+
+            Object[] values = Arrays.stream(fieldsWithoutId)
+                    .map(record::get)
+                    .toArray();
+
+            insert = insert.values(values);
+        }
+
+        return insert
+                .returningResult(RELEASE.fields())
+                .fetch()
+                .into(Release.class);
+    }
+
+    @Override
+    public void updateBatch(Collection<Release> releases) {
+        List<ReleaseRecord> releaseRecords = releases.stream().map(release -> {
+            ReleaseRecord record = dsl.newRecord(RELEASE);
+            fillRecordFromDomainWithId(release, record);
+            return record;
+        }).toList();
+
+        dsl.batchUpdate(releaseRecords).execute();
+    }
+
+    @Override
     public Optional<Release> update(Release release) {
         ReleaseRecord record = dsl.newRecord(RELEASE);
         record.setId(release.getId());
-        fillRecordFromDomain(release, record);
+        fillRecordFromDomainWithId(release, record);
 
         int rowsUpdated = dsl.update(RELEASE)
                 .set(record)
@@ -72,14 +112,39 @@ public class ReleaseRepositoryImpl implements ReleaseRepository {
         return rowsUpdated > 0 ? Optional.of(release) : Optional.empty();
     }
 
+    @Override
+    public void deleteByIds(Collection<Long> releaseIds) {
+        dsl.deleteFrom(RELEASE)
+                .where(RELEASE.ID.in(releaseIds))
+                .execute();
+    }
+
+    private void fillRecordFromDomainWithId(Release release, ReleaseRecord record) {
+        record.setId(release.getId());
+        fillRecordFromDomain(release, record);
+    }
+
     private void fillRecordFromDomain(Release release, ReleaseRecord record) {
         record.setSeriesId(release.getSeriesId());
         record.setIndex(release.getIndex());
-        record.setTitle(release.getTitle());
-        record.setFilePath(release.getFilePath());
-        record.setReleaseDate(release.getReleaseDate());
-        record.setReleaseType(toJooqReleaseType(release.getReleaseType()));
-        record.setMetadataSourceId(release.getMetadataSourceId());
+        if (release.getTitle() != null) {
+            record.setTitle(release.getTitle());
+        }
+        if (release.getFilePath() != null) {
+            record.setFilePath(release.getFilePath());
+        }
+        if (release.getMetadataSourceId() != null) {
+            record.setMetadataSourceId(release.getMetadataSourceId());
+        }
+        if (release.getReleaseType() != null) {
+            record.setReleaseType(toJooqReleaseType(release.getReleaseType()));
+        }
+        if (release.getFilePath() != null) {
+            record.setFilePath(release.getFilePath());
+        }
+        if (release.getReleaseDate() != null) {
+            record.setReleaseDate(release.getReleaseDate());
+        }
     }
 
     @Override

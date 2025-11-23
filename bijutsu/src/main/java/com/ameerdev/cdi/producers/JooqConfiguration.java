@@ -1,6 +1,6 @@
 package com.ameerdev.cdi.producers;
 
-import com.ameerdev.mapper.LibraryMapper;
+import com.ameerdev.mapper.LibraryWithPathsMapper;
 import com.ameerdev.mapper.ReleaseMapper;
 import com.ameerdev.mapper.SeriesMapper;
 import com.ameerdev.models.Library;
@@ -39,7 +39,7 @@ public class JooqConfiguration {
                                 if (type == Release.class) {
                                     return (RecordMapper<R, E>) new ReleaseMapper();
                                 } else if (type == Library.class) {
-                                    return (RecordMapper<R, E>) new LibraryMapper();
+                                    return (RecordMapper<R, E>) new LibraryWithPathsMapper();
                                 } else if (type == Series.class) {
                                     return (RecordMapper<R, E>) new SeriesMapper();
                                 }

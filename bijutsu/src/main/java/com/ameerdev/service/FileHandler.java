@@ -21,4 +21,24 @@ public class FileHandler {
     public static boolean isDirectory(Path path) {
         return Files.isDirectory(path);
     }
+
+    public static boolean isRegularFile(Path path) {
+        return Files.isRegularFile(path);
+    }
+
+    public static Stream<Path> walk(Path path) throws IOException {
+        return Files.walk(path);
+    }
+
+    public static boolean isHidden(Path path) {
+        try {
+            return Files.isHidden(path);
+        } catch (IOException e) {
+            return false; // assume not hidden
+        }
+    }
+
+    public static boolean isReadable(Path path) {
+        return Files.isReadable(path);
+    }
 }

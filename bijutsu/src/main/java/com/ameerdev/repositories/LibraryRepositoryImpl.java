@@ -2,6 +2,7 @@ package com.ameerdev.repositories;
 
 import com.ameerdev.jooq.generated.tables.records.LibraryRecord;
 import com.ameerdev.mapper.LibraryMapper;
+import com.ameerdev.mapper.LibraryWithPathsMapper;
 import com.ameerdev.models.Library;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -30,7 +31,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
                                 dsl.select(LIBRARY.libraryDirectory().PATH)
                                         .from(LIBRARY.libraryDirectory())
                                         .where(LIBRARY.libraryDirectory().LIBRARY_ID.eq(LIBRARY.ID))
-                        ).as(LibraryMapper.PATHS_FIELD).convertFrom(r -> r.map(Record1::value1))
+                        ).as(LibraryWithPathsMapper.PATHS_FIELD).convertFrom(r -> r.map(Record1::value1))
                 )
                 .from(LIBRARY)
                 .fetchInto(Library.class);
@@ -49,9 +50,18 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
     @Override
     public Optional<Library> fetchLibraryById(long libraryId) {
-        return dsl.selectFrom(LIBRARY)
+        return dsl.select(LIBRARY.asterisk())
+                .select(
+                        DSL.multiset(
+                                dsl.select(LIBRARY.libraryDirectory().PATH)
+                                        .from(LIBRARY.libraryDirectory())
+                                        .where(LIBRARY.libraryDirectory().LIBRARY_ID.eq(LIBRARY.ID))
+                        ).as(LibraryWithPathsMapper.PATHS_FIELD).convertFrom(r -> r.map(Record1::value1))
+                )
+                .from(LIBRARY)
                 .where(LIBRARY.ID.eq(libraryId))
-                .fetchOptionalInto(Library.class);
+                .fetchOptional()
+                .map(record -> record.into(Library.class));
     }
 
     @Override
@@ -79,7 +89,8 @@ public class LibraryRepositoryImpl implements LibraryRepository {
                             .execute();
                 }
 
-                return Optional.of(recordResult.into(Library.class));
+                // TODO: Map to Library.class directly
+                return Optional.of(recordResult.map(new LibraryMapper(library.getPaths())));
             }
 
             return Optional.empty();

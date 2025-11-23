@@ -3,9 +3,11 @@ package com.ameerdev.resource;
 import com.ameerdev.models.Library;
 import com.ameerdev.resource.dto.mappers.RequestMappers;
 import com.ameerdev.resource.dto.request.CreateLibraryDTO;
+import com.ameerdev.service.LibraryScannerService;
 import com.ameerdev.service.LibraryService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.Optional;
@@ -16,8 +18,12 @@ public class LibraryResourceV1 {
 
     @Inject
     LibraryService service;
+    @Inject
+    LibraryScannerService libraryScannerService;
 
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createNewLibrary(CreateLibraryDTO library) {
         Optional<Library> result = service.createNewLibrary(RequestMappers.toLibrary(library));
         if (result.isPresent()) {
@@ -29,13 +35,14 @@ public class LibraryResourceV1 {
 
     @DELETE
     @Path("/{libraryId}")
-    public Response deleteLibrary(@PathParam("libraryId") int libraryId) {
+    public Response deleteLibrary(@PathParam("libraryId") long libraryId) {
         return Response.serverError().status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
     @POST
     @Path("/scanLibrary/{libraryId}")
-    public Response scanLibrary(@PathParam("libraryId") int libraryId) {
-        return Response.serverError().status(Response.Status.NOT_IMPLEMENTED).build();
+    public Response scanLibrary(@PathParam("libraryId") long libraryId) {
+        libraryScannerService.scanLibrary(libraryId);
+        return Response.ok().build();
     }
 }

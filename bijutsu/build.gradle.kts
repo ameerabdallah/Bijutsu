@@ -48,6 +48,7 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-rest")
     implementation("io.quarkus:quarkus-cache")
+    implementation("io.quarkus:quarkus-rest-jackson")
     implementation("io.quarkus:quarkus-rest-client-jackson")
     implementation("io.quarkiverse.openapi.generator:quarkus-openapi-generator:2.13.0-lts")
     implementation("org.apache.commons:commons-text:1.14.0")

@@ -73,7 +73,7 @@ public interface SeriesRepository {
     /**
      * Delete series by their IDs.
      */
-    void deleteBySeriesIds(Collection<Long> seriesIds);
+    void deleteByIds(Collection<Long> seriesIds);
 
     /**
      * Delete a series by its ID.

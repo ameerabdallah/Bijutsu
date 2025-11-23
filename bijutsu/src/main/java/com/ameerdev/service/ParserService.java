@@ -67,24 +67,4 @@ public class ParserService {
                 .metadataSourceId(metadata.get("id"))
                 .build();
     }
-
-    public String parseReleaseTitle(@Nullable String name) {
-        if (name == null || name.isBlank()) {
-            return "";
-        }
-
-        String nameNormalized = name.strip();
-
-        Matcher braceMatcher = BRACE_PATTERN.matcher(nameNormalized);
-        StringBuilder titleBuilder = new StringBuilder();
-
-        int lastEndIndex = 0;
-        while (braceMatcher.find()) {
-            titleBuilder.append(nameNormalized, lastEndIndex, braceMatcher.start());
-            lastEndIndex = braceMatcher.end();
-        }
-        titleBuilder.append(nameNormalized.substring(lastEndIndex));
-
-        return titleBuilder.toString().replace('_', ' ').strip();
-    }
 }
