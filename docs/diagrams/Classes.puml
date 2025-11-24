@@ -1,0 +1,410 @@
+@startuml
+top to bottom direction
+
+enum BookType << enumeration >> {
+  + BookType():
+  + valueOf(String): BookType
+  + values(): BookType[]
+}
+class ComicVineMetadataProvider {
+  + ComicVineMetadataProvider():
+  + metadataType(): BookType
+  + fetchSeriesMetadata(String): Optional<Series>
+  + search(SeriesIdentifier): Optional<String>
+  + fetchReleaseMetadata(String, int): Optional<Release>
+}
+entity CreateLibraryDTO << record >> {
+  + CreateLibraryDTO(String, String, ReadDirection, BookType, SeriesType, List<String>):
+  + seriesType(): SeriesType
+  + libraryType(): BookType
+  + readDirection(): ReadDirection
+  + description(): String
+  + name(): String
+  + paths(): List<String>
+}
+class EnumConverters {
+  + EnumConverters():
+}
+class FileHandler {
+  - FileHandler():
+  + list(Path): Stream<Path>
+  + isDirectory(Path): boolean
+  + walk(Path): Stream<Path>
+  + isHidden(Path): boolean
+  + isReadable(Path): boolean
+  + isRegularFile(Path): boolean
+}
+class JooqConfiguration {
+  + JooqConfiguration():
+  + dslContext(): DSLContext
+}
+class Library {
+  + Library(long, String, String, List<String>, BookType, ReadDirection, SeriesType):
+  + Library():
+  - paths: List<String>
+  - id: long
+  - name: String
+  - description: String
+  - seriesType: SeriesType
+  - readDirection: ReadDirection
+  - bookType: BookType
+  + builder(): LibraryBuilder
+   paths: List<String>
+   name: String
+   description: String
+   readDirection: ReadDirection
+   id: long
+   bookType: BookType
+   seriesType: SeriesType
+}
+entity LibraryDTO << record >> {
+  + LibraryDTO(Long, String, String, List<String>):
+  + id(): Long
+  + description(): String
+  + paths(): List<String>
+  + name(): String
+}
+class LibraryMapper {
+  + LibraryMapper(List<String>):
+  + map(Record): Library?
+}
+interface LibraryRepository << interface >> {
+  + update(long, Library): void
+  + fetchLibraryById(long): Optional<Library>
+  + create(Library): Optional<Library>
+  + findAllLibraries(): List<Library>
+  + fetchLibraryPaths(long): List<String>
+  + deleteById(long): void
+}
+class LibraryRepositoryImpl {
+  + LibraryRepositoryImpl():
+  + fetchLibraryById(long): Optional<Library>
+  + create(Library): Optional<Library>
+  + findAllLibraries(): List<Library>
+  + fetchLibraryPaths(long): List<String>
+  + update(long, Library): void
+  + deleteById(long): void
+}
+class LibraryResourceV1 {
+  + LibraryResourceV1():
+  + scanLibrary(long): Response
+  + createNewLibrary(CreateLibraryDTO): Response
+  + updateLibrary(long, CreateLibraryDTO): Response
+  + deleteLibrary(long): Response
+  + getLibraryById(long): Response
+   allLibraries: Response
+}
+class LibraryScannerService {
+  + LibraryScannerService():
+  - findAllReleaseFiles(Series): Set<Path>
+  - scanSeries(Library, Series): void
+  + scanLibrary(Library): void
+  - getSeriesPaths(Path): Set<String>
+  - shouldSeriesPathBeVisible(Path): boolean
+  - fetchSeriesScanData(Library): SeriesScanData
+  + hasSupportedExtension(Path): boolean
+  - handleNewSeries(SeriesScanData, Library): void
+  - scanSeries(Library, Path): void
+  - runSeriesScans(Library, SeriesScanData): CompletableFuture<Void>
+  - handleExistingSeries(SeriesScanData, Library): void
+  - handleRemovedSeries(SeriesScanData): void
+  - containsSupportedFileInDirectory(Path): boolean
+  + scanLibrary(Long): void
+}
+class LibraryService {
+  + LibraryService():
+  + updateLibrary(long, Library): void
+  + createNewLibrary(Library): Optional<Library>
+  + deleteLibrary(long): void
+  + getLibraryById(long): Optional<Library>
+   allLibraries: List<Library>
+}
+class LibraryWithPathsMapper {
+  + LibraryWithPathsMapper():
+  - getPathsList(Record): List<String>
+  + map(Record): Library?
+}
+class MangaUpdatesMetadataProvider {
+  + MangaUpdatesMetadataProvider():
+  + search(SeriesIdentifier): Optional<String>
+  + fetchSeriesMetadata(String): Optional<Series>
+  + metadataType(): BookType
+}
+class MangaUpdatesMetadataProxy {
+  + MangaUpdatesMetadataProxy():
+  + searchSeries(String, String): SeriesSearchResponseV1
+  + getSeriesById(Long): SeriesModelV1
+}
+interface MetadataConfig << interface >> {
+  + comicProvider(): String
+  + mangaProvider(): String
+}
+interface MetadataProvider << interface >> {
+  + metadataType(): BookType
+  + search(SeriesIdentifier): Optional<String>
+  + fetchSeriesMetadata(String): Optional<Series>
+  + fetchReleaseMetadata(String?, int): Optional<Release>
+}
+class MetadataProviderFactory {
+  + MetadataProviderFactory():
+  + getProvider(BookType): MetadataProvider
+  + init(): void
+}
+class Page {
+  + Page():
+}
+class ParserService {
+  + ParserService():
+  + parseSeriesName(String?): SeriesIdentifier
+}
+enum ReadDirection << enumeration >> {
+  + ReadDirection():
+  + values(): ReadDirection[]
+  + valueOf(String): ReadDirection
+}
+class Release {
+  + Release(long, int, String, String, LocalDate, ReleaseType, String, long):
+  + Release():
+  - id: long
+  - filePath: String
+  - releaseDate: LocalDate
+  - releaseType: ReleaseType
+  - metadataSourceId: String
+  - title: String
+  - index: int
+  - seriesId: long
+  + builder(): ReleaseBuilder
+   releaseType: ReleaseType
+   index: int
+   title: String
+   metadataSourceId: String
+   filePath: String
+   id: long
+   seriesId: long
+   releaseDate: LocalDate
+}
+class ReleaseMapper {
+  + ReleaseMapper():
+  + map(Record): Release?
+}
+interface ReleaseRepository << interface >> {
+  + createBatch(Collection<Release>): List<Release>
+  + deleteByIds(Collection<Long>): void
+  + findBySeriesId(long): List<Release>
+  + deleteById(long): boolean
+  + findAll(): List<Release>
+  + findByMetadataSourceId(String): Optional<Release>
+  + create(Release): Optional<Release>
+  + updateBatch(Collection<Release>): void
+  + update(Release): Optional<Release>
+  + findById(long): Optional<Release>
+}
+class ReleaseRepositoryImpl {
+  + ReleaseRepositoryImpl():
+  + findAll(): List<Release>
+  + deleteByIds(Collection<Long>): void
+  - fillRecordFromDomainWithId(Release, ReleaseRecord): void
+  + updateBatch(Collection<Release>): void
+  - fillRecordFromDomain(Release, ReleaseRecord): void
+  + create(Release): Optional<Release>
+  + findByMetadataSourceId(String): Optional<Release>
+  + deleteById(long): boolean
+  + findBySeriesId(long): List<Release>
+  + update(Release): Optional<Release>
+  + createBatch(Collection<Release>): List<Release>
+  + findById(long): Optional<Release>
+}
+class ReleaseResourceV1 {
+  + ReleaseResourceV1():
+  + getAllReleases(long): Response
+  + refreshMetadata(long): Response
+  + downloadReleaseFile(long): Response
+}
+class ReleaseService {
+  + ReleaseService():
+  + getReleaseFilePath(long): Optional<Path>
+  + getReleasesBySeriesId(long): List<Release>
+}
+enum ReleaseType << enumeration >> {
+  + ReleaseType():
+  + values(): ReleaseType[]
+  + valueOf(String): ReleaseType
+}
+class RequestMappers {
+  + RequestMappers():
+  + toLibrary(CreateLibraryDTO): Library
+}
+class Series {
+  + Series(long, long, String, String, String, String, Integer, String):
+  + Series():
+  - description: String
+  - id: long
+  - libraryId: long
+  - metadataSourceId: String
+  - author: String
+  - path: String
+  - title: String
+  - releaseYear: Integer
+  + builder(): SeriesBuilder
+   description: String
+   libraryId: long
+   title: String
+   author: String
+   releaseYear: Integer
+   metadataSourceId: Optional<String>
+   id: long
+   path: String
+}
+interface SeriesApi << interface >>
+class SeriesIdentifier {
+  + SeriesIdentifier(String?, String?, Integer?):
+  + SeriesIdentifier():
+  - title: String?
+  - metadataSourceId: String?
+  - year: Integer?
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + builder(): SeriesIdentifierBuilder
+   metadataSourceId: Optional<String>
+   title: Optional<String>
+   year: Optional<Integer>
+}
+class SeriesMapper {
+  + SeriesMapper():
+  + map(Record): Series?
+}
+interface SeriesRepository << interface >> {
+  + findAll(): List<Series>
+  + create(Series): Optional<Series>
+  + deleteByIds(Collection<Long>): void
+  + findSeriesByLibraryId(long): List<Series>
+  + deleteBySeriesPaths(Collection<String>): void
+  + findSeriesPathsByLibraryId(long): Set<String>
+  + deleteById(long): boolean
+  + findSeriesByMetadataSourceId(String): Optional<Series>
+  + fetchSeriesById(Long): Optional<Series>
+  + update(Series): Optional<Series>
+}
+class SeriesRepositoryImpl {
+  + SeriesRepositoryImpl():
+  + fetchSeriesById(Long): Optional<Series>
+  + create(Series): Optional<Series>
+  + findSeriesPathsByLibraryId(long): Set<String>
+  + deleteByIds(Collection<Long>): void
+  + findAll(): List<Series>
+  + deleteById(long): boolean
+  + findSeriesByMetadataSourceId(String): Optional<Series>
+  + deleteBySeriesPaths(Collection<String>): void
+  - fillFromDomain(Series, SeriesRecord): void
+  + update(Series): Optional<Series>
+  + findSeriesByLibraryId(long): List<Series>
+}
+class SeriesResourceV1 {
+  + SeriesResourceV1():
+  + refreshMetadata(int): Response
+  + getAllSeries(long, int, int, String): Response
+}
+entity SeriesScanData << record >> {
+  + SeriesScanData(Set<String>, List<Series>):
+  + fileSystemSeriesPaths(): Set<String>
+  + repoSeriesPaths(): List<Series>
+}
+class SeriesService {
+  + SeriesService():
+  + getSeriesByLibraryId(long): List<Series>
+   allSeries: List<Series>
+}
+enum SeriesType << enumeration >> {
+  - SeriesType(String):
+  + valueOf(String): SeriesType
+  + toString(): String
+  + values(): SeriesType[]
+}
+
+ComicVineMetadataProvider     ..>  BookType
+ComicVineMetadataProvider     ..>  MetadataProvider
+ComicVineMetadataProvider     ..>  Release
+ComicVineMetadataProvider     ..>  Series
+ComicVineMetadataProvider     ..>  SeriesIdentifier
+CreateLibraryDTO              ..>  BookType
+CreateLibraryDTO              ..>  ReadDirection
+CreateLibraryDTO              ..>  SeriesType
+JooqConfiguration             ..>  Library
+JooqConfiguration             ..>  LibraryWithPathsMapper
+JooqConfiguration             ..>  Release
+JooqConfiguration             ..>  ReleaseMapper
+JooqConfiguration             ..>  Series
+JooqConfiguration             ..>  SeriesMapper
+Library                       ..>  BookType
+Library                       ..>  ReadDirection
+Library                       ..>  SeriesType
+LibraryMapper                 ..>  Library
+LibraryRepository             ..>  Library
+LibraryRepositoryImpl         ..>  Library
+LibraryRepositoryImpl         ..>  LibraryMapper
+LibraryRepositoryImpl         ..>  LibraryRepository
+LibraryRepositoryImpl         ..>  LibraryWithPathsMapper
+LibraryResourceV1             ..>  CreateLibraryDTO
+LibraryResourceV1             ..>  Library
+LibraryResourceV1             ..>  LibraryScannerService
+LibraryResourceV1             ..>  LibraryService
+LibraryResourceV1             ..>  RequestMappers
+LibraryScannerService         ..>  FileHandler
+LibraryScannerService         ..>  Library
+LibraryScannerService         ..>  LibraryRepository
+LibraryScannerService         ..>  LibraryScannerService
+LibraryScannerService         ..>  MetadataProvider
+LibraryScannerService         ..>  MetadataProviderFactory
+LibraryScannerService         ..>  ParserService
+LibraryScannerService         ..>  Release
+LibraryScannerService         ..>  ReleaseRepository
+LibraryScannerService         ..>  ReleaseType
+LibraryScannerService         ..>  Series
+LibraryScannerService         ..>  SeriesIdentifier
+LibraryScannerService         ..>  SeriesRepository
+LibraryScannerService         ..>  SeriesScanData
+LibraryService                ..>  Library
+LibraryService                ..>  LibraryRepository
+LibraryService                ..>  LibraryScannerService
+LibraryWithPathsMapper        ..>  Library
+LibraryWithPathsMapper        ..>  LibraryWithPathsMapper
+MangaUpdatesMetadataProvider  ..>  BookType
+MangaUpdatesMetadataProvider  ..>  MangaUpdatesMetadataProvider
+MangaUpdatesMetadataProvider  ..>  MangaUpdatesMetadataProxy
+MangaUpdatesMetadataProvider  ..>  MetadataProvider
+MangaUpdatesMetadataProvider  ..>  Series
+MangaUpdatesMetadataProvider  ..>  SeriesIdentifier
+MetadataProvider              ..>  BookType
+MetadataProvider              ..>  Release
+MetadataProvider              ..>  Series
+MetadataProvider              ..>  SeriesIdentifier
+MetadataProviderFactory       ..>  BookType
+MetadataProviderFactory       ..>  ComicVineMetadataProvider
+MetadataProviderFactory       ..>  MangaUpdatesMetadataProvider
+MetadataProviderFactory       ..>  MetadataConfig
+MetadataProviderFactory      "1" *--> "providers\n*" MetadataProvider
+ParserService                 ..>  SeriesIdentifier
+Release                       ..>  ReleaseType
+ReleaseMapper                 ..>  Release
+ReleaseRepository             ..>  Release
+ReleaseRepositoryImpl         ..>  Release
+ReleaseRepositoryImpl         ..>  ReleaseRepository
+ReleaseRepositoryImpl         ..>  ReleaseRepositoryImpl
+ReleaseResourceV1             ..>  ReleaseService
+ReleaseService                ..>  Release
+ReleaseService                ..>  ReleaseRepository
+RequestMappers                ..>  CreateLibraryDTO
+RequestMappers                ..>  Library
+SeriesMapper                  ..>  Series
+SeriesRepository              ..>  Series
+SeriesRepositoryImpl          ..>  Series
+SeriesRepositoryImpl          ..>  SeriesRepository
+SeriesRepositoryImpl          ..>  SeriesRepositoryImpl
+SeriesResourceV1              ..>  Series
+SeriesResourceV1              ..>  SeriesService
+SeriesScanData                ..>  Series
+SeriesService                 ..>  Series
+SeriesService                 ..>  SeriesRepository
+@enduml
