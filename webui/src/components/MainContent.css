@@ -1,0 +1,126 @@
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.content-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #333;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #444;
+}
+
+.empty-state,
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #999;
+  text-align: center;
+}
+
+.empty-state h2 {
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  margin: 0.5rem 0;
+}
+
+.empty-state-hint {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-table thead {
+  background-color: #333;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ccc;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #333;
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+  background-color: #333;
+}
+
+.clickable-row.downloading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.download-indicator {
+  color: #007acc;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.data-table td {
+  padding: 1rem 1.5rem;
+  color: white;
+}
+
+.data-table td:first-child {
+  font-weight: 500;
+}
+
+.data-table td:last-child {
+  color: #999;
+}
