@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { libraryApi } from '../services/api';
 import { BookType, ReadDirection, SeriesType } from '../types';
-import type { CreateLibraryDTO } from '../types';
+import type { CreateLibraryDTO, Library } from '../types';
 import './CreateLibraryModal.css';
 
 interface CreateLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  library?: Library; // If provided, edit mode; otherwise, create mode
 }
 
 const CreateLibraryModal: React.FC<CreateLibraryModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  library,
 }) => {
+  const isEditMode = !!library;
   const [formData, setFormData] = useState<CreateLibraryDTO>({
     name: '',
     description: '',
@@ -25,6 +28,20 @@ const CreateLibraryModal: React.FC<CreateLibraryModalProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Populate form with library data when in edit mode
+  useEffect(() => {
+    if (isEditMode && library) {
+      setFormData({
+        name: library.name,
+        description: library.description || '',
+        readDirection: library.readDirection || ReadDirection.DEFAULT,
+        libraryType: library.libraryType || BookType.MANGA,
+        seriesType: library.seriesType || SeriesType.SERIES,
+        paths: library.paths.length > 0 ? library.paths : [''],
+      });
+    }
+  }, [isEditMode, library]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -80,16 +97,23 @@ const CreateLibraryModal: React.FC<CreateLibraryModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      await libraryApi.create({
-        ...formData,
-        paths: validPaths,
-      });
+      if (isEditMode && library) {
+        await libraryApi.update(library.id, {
+          ...formData,
+          paths: validPaths,
+        });
+      } else {
+        await libraryApi.create({
+          ...formData,
+          paths: validPaths,
+        });
+      }
       onSuccess();
       resetForm();
       onClose();
     } catch (err) {
-      setError('Failed to create library. Please try again.');
-      console.error('Error creating library:', err);
+      setError(`Failed to ${isEditMode ? 'update' : 'create'} library. Please try again.`);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} library:`, err);
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +142,7 @@ const CreateLibraryModal: React.FC<CreateLibraryModalProps> = ({
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Create New Library</h2>
+          <h2>{isEditMode ? 'Edit Library' : 'Create New Library'}</h2>
           <button className="modal-close-btn" onClick={handleClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round" />
@@ -231,7 +255,10 @@ const CreateLibraryModal: React.FC<CreateLibraryModalProps> = ({
               Cancel
             </button>
             <button type="submit" className="btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Library'}
+              {isSubmitting
+                ? (isEditMode ? 'Updating...' : 'Creating...')
+                : (isEditMode ? 'Update Library' : 'Create Library')
+              }
             </button>
           </div>
         </form>

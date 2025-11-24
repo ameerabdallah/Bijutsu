@@ -1,6 +1,7 @@
 package com.ameerdev.repositories;
 
 import com.ameerdev.models.Library;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +33,17 @@ public interface LibraryRepository {
      * @return the created library record wrapped in an Optional, or an empty Optional if creation failed
      */
     Optional<Library> create(Library library);
+
+    /**
+     * Delete a library record by its ID.
+     * @param libraryId the ID of the library to be deleted
+     */
+    void deleteById(long libraryId);
+
+    /**
+     * Update an existing library record in the database.
+     * @param libraryId the ID of the library to be updated
+     * @param library the library data to update
+     */
+    void update(long libraryId, @NotNull Library library);
 }

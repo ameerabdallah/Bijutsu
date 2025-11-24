@@ -6,6 +6,7 @@ import com.ameerdev.mapper.LibraryWithPathsMapper;
 import com.ameerdev.models.Library;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
@@ -97,4 +98,41 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         });
     }
 
+    @Override
+    public void deleteById(long libraryId) {
+        dsl.deleteFrom(LIBRARY)
+                .where(LIBRARY.ID.eq(libraryId))
+                .execute();
+    }
+
+    @Override
+    public void update(long libraryId, @NotNull Library library) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            LibraryRecord record = ctx.newRecord(LIBRARY);
+            record.setDescription(library.getDescription());
+            record.setName(library.getName());
+            record.setSeriesType(toJooqSeriesType(library.getSeriesType()));
+            record.setBookType(toJooqBookType(library.getBookType()));
+            record.setReadDirection(toJooqReadDirection(library.getReadDirection()));
+
+            ctx.update(LIBRARY)
+                    .set(record)
+                    .where(LIBRARY.ID.eq(libraryId))
+                    .execute();
+
+            // Update library paths
+            ctx.deleteFrom(LIBRARY.libraryDirectory())
+                    .where(LIBRARY.libraryDirectory().LIBRARY_ID.eq(libraryId))
+                    .execute();
+
+            for (String path : library.getPaths()) {
+                ctx.insertInto(LIBRARY.libraryDirectory())
+                        .set(LIBRARY.libraryDirectory().LIBRARY_ID, libraryId)
+                        .set(LIBRARY.libraryDirectory().PATH, path)
+                        .execute();
+            }
+        });
+    }
 }

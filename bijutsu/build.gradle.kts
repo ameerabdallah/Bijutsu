@@ -1,3 +1,4 @@
+import io.quarkus.gradle.tasks.QuarkusDev
 import org.flywaydb.core.Flyway
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
@@ -106,6 +107,14 @@ tasks.register("integrationTest", Test::class) {
         includeTags("integration")
     }
     shouldRunAfter(Test::class)
+}
+
+tasks.named<QuarkusDev>("quarkusDev") {
+    jvmArgs = listOf(
+        "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+        "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+        "-Dio.netty.noUnsafe=true"
+    )
 }
 
 sourceSets {

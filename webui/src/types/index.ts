@@ -31,6 +31,9 @@ export interface Library {
   name: string;
   description: string;
   paths: string[];
+  readDirection?: ReadDirection;
+  libraryType?: BookType;
+  seriesType?: SeriesType;
 }
 
 export interface CreateLibraryDTO {

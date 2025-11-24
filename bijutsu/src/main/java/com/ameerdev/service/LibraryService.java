@@ -4,6 +4,7 @@ import com.ameerdev.models.Library;
 import com.ameerdev.repositories.LibraryRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +17,6 @@ public class LibraryService {
 
     @Inject
     LibraryScannerService scanService;
-
-    public void performLibraryScan(long libraryId) {
-        Optional<Library> fetchedLibrary = repository.fetchLibraryById(libraryId);
-
-        fetchedLibrary.ifPresent(library -> {
-            scanService.scanLibrary(library);
-        });
-    }
 
     public Optional<Library> createNewLibrary(Library library) {
         Optional<Library> createdLibrary = repository.create(library);
@@ -38,5 +31,20 @@ public class LibraryService {
 
     public List<Library> getAllLibraries() {
         return repository.findAllLibraries();
+    }
+
+    public void deleteLibrary(long libraryId) {
+        repository.deleteById(libraryId);
+    }
+
+    public void updateLibrary(long libraryId, @NotNull Library library) {
+        repository.update(libraryId, library);
+        // Always rescan the library after an update. Might not always be necessary, but
+        // it's easier to keep things consistent this way
+        scanService.scanLibrary(libraryId);
+    }
+
+    public Optional<Library> getLibraryById(long libraryId) {
+        return repository.fetchLibraryById(libraryId);
     }
 }

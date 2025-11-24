@@ -53,6 +53,14 @@ export const libraryApi = {
     });
   },
 
+  // Update a library
+  update: async (libraryId: number, library: CreateLibraryDTO): Promise<void> => {
+    await fetchApi<void>(`/v1/library/updateLibrary/${libraryId}`, {
+      method: 'POST',
+      body: JSON.stringify(library),
+    });
+  },
+
   // Scan a library
   scan: async (libraryId: number): Promise<void> => {
     await fetchApi<void>(`/v1/library/scanLibrary/${libraryId}`, {

@@ -1,15 +1,11 @@
 package com.ameerdev.resource;
 
-import com.ameerdev.models.enums.BookType;
-import com.ameerdev.models.enums.ReadDirection;
-import com.ameerdev.resource.dto.request.CreateLibraryDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.any;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
