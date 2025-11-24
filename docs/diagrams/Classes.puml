@@ -423,7 +423,6 @@ LibraryResourceV1             ..>  RequestMappers
 LibraryScannerService         ..>  FileHandler
 LibraryScannerService         ..>  Library
 LibraryScannerService         ..>  LibraryRepository
-LibraryScannerService         ..>  LibraryScannerService
 LibraryScannerService         ..>  MetadataProvider
 LibraryScannerService         ..>  MetadataProviderFactory
 LibraryScannerService         ..>  ParserService
@@ -438,9 +437,7 @@ LibraryService                ..>  Library
 LibraryService                ..>  LibraryRepository
 LibraryService                ..>  LibraryScannerService
 LibraryWithPathsMapper        ..>  Library
-LibraryWithPathsMapper        ..>  LibraryWithPathsMapper
 MangaUpdatesMetadataProvider  ..>  BookType
-MangaUpdatesMetadataProvider  ..>  MangaUpdatesMetadataProvider
 MangaUpdatesMetadataProvider  ..>  MangaUpdatesMetadataProxy
 MangaUpdatesMetadataProvider  ..>  MetadataProvider
 MangaUpdatesMetadataProvider  ..>  Series
@@ -460,7 +457,6 @@ ReleaseMapper                 ..>  Release
 ReleaseRepository             ..>  Release
 ReleaseRepositoryImpl         ..>  Release
 ReleaseRepositoryImpl         ..>  ReleaseRepository
-ReleaseRepositoryImpl         ..>  ReleaseRepositoryImpl
 ReleaseResourceV1             ..>  ReleaseService
 ReleaseService                ..>  Release
 ReleaseService                ..>  ReleaseRepository
@@ -470,7 +466,6 @@ SeriesMapper                  ..>  Series
 SeriesRepository              ..>  Series
 SeriesRepositoryImpl          ..>  Series
 SeriesRepositoryImpl          ..>  SeriesRepository
-SeriesRepositoryImpl          ..>  SeriesRepositoryImpl
 SeriesResourceV1              ..>  Series
 SeriesResourceV1              ..>  SeriesService
 SeriesScanData                ..>  Series
