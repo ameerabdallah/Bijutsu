@@ -24,7 +24,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     DSLContext dsl;
 
     @Override
-    public List<Library> fetchAllLibraries() {
+    public List<Library> findAllLibraries() {
         return dsl.select(LIBRARY.asterisk())
                 .select(
                         DSL.multiset(

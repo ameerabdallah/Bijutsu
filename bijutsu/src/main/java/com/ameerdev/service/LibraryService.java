@@ -5,6 +5,7 @@ import com.ameerdev.repositories.LibraryRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -33,5 +34,9 @@ public class LibraryService {
 
             return newLibrary;
         });
+    }
+
+    public List<Library> getAllLibraries() {
+        return repository.findAllLibraries();
     }
 }

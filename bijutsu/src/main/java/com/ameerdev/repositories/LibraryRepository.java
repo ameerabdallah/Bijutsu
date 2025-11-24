@@ -10,7 +10,7 @@ public interface LibraryRepository {
      * Retrieve all library records from the database.
      * @return a list of all LibraryRecord objects
      */
-    List<Library> fetchAllLibraries();
+    List<Library> findAllLibraries();
 
     /**
      * Retrieve all paths associated with a specific library ID.

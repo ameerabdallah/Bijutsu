@@ -20,6 +20,8 @@ public class LibraryResourceV1 {
     LibraryService service;
     @Inject
     LibraryScannerService libraryScannerService;
+    @Inject
+    LibraryService libraryService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -44,5 +46,11 @@ public class LibraryResourceV1 {
     public Response scanLibrary(@PathParam("libraryId") long libraryId) {
         libraryScannerService.scanLibrary(libraryId);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/getAllLibraries")
+    public Response getAllLibraries() {
+        return Response.ok(libraryService.getAllLibraries()).build();
     }
 }
