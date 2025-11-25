@@ -1,7 +1,8 @@
-package com.ameerdev.repositories;
+package com.ameerdev.repositories.jooq;
 
 import com.ameerdev.jooq.generated.tables.records.SeriesRecord;
 import com.ameerdev.models.Series;
+import com.ameerdev.repositories.SeriesRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jooq.DSLContext;

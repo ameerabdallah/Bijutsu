@@ -1,4 +1,4 @@
-package com.ameerdev.mapper;
+package com.ameerdev.repositories.jooq.mapper;
 
 import com.ameerdev.models.Series;
 import org.jetbrains.annotations.Nullable;

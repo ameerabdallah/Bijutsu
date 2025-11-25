@@ -1,4 +1,4 @@
-package com.ameerdev.mapper;
+package com.ameerdev.repositories.jooq.mapper;
 
 import com.ameerdev.jooq.generated.enums.ReleaseType;
 import com.ameerdev.models.Release;
@@ -9,7 +9,7 @@ import org.jooq.RecordMapper;
 import java.time.LocalDate;
 
 import static com.ameerdev.jooq.generated.Tables.RELEASE;
-import static com.ameerdev.mapper.EnumConverters.ReleaseTypeConverter.toDomainReleaseType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.ReleaseTypeConverter.toDomainReleaseType;
 
 public class ReleaseMapper implements RecordMapper<Record, Release> {
     @Override

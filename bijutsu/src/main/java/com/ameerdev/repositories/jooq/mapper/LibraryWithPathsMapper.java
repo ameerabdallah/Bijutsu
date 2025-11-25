@@ -1,4 +1,4 @@
-package com.ameerdev.mapper;
+package com.ameerdev.repositories.jooq.mapper;
 
 import com.ameerdev.jooq.generated.enums.BookType;
 import com.ameerdev.jooq.generated.enums.ReadDirection;
@@ -11,9 +11,9 @@ import org.jooq.Record;
 import java.util.List;
 
 import static com.ameerdev.jooq.generated.Tables.LIBRARY;
-import static com.ameerdev.mapper.EnumConverters.BookTypeConverter.toDomainBookType;
-import static com.ameerdev.mapper.EnumConverters.ReadDirectionConverter.toDomainReadDirection;
-import static com.ameerdev.mapper.EnumConverters.SeriesTypeConverter.toDomainSeriesType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.BookTypeConverter.toDomainBookType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.ReadDirectionConverter.toDomainReadDirection;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.SeriesTypeConverter.toDomainSeriesType;
 
 public class LibraryWithPathsMapper implements RecordMapper<Record, Library> {
     public static final String PATHS_FIELD = "paths";

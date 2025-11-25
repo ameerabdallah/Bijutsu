@@ -1,8 +1,8 @@
 package com.ameerdev.cdi.producers;
 
-import com.ameerdev.mapper.LibraryWithPathsMapper;
-import com.ameerdev.mapper.ReleaseMapper;
-import com.ameerdev.mapper.SeriesMapper;
+import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
+import com.ameerdev.repositories.jooq.mapper.ReleaseMapper;
+import com.ameerdev.repositories.jooq.mapper.SeriesMapper;
 import com.ameerdev.models.Library;
 import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;

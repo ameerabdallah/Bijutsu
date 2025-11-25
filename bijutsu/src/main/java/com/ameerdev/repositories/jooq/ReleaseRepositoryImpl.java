@@ -1,7 +1,8 @@
-package com.ameerdev.repositories;
+package com.ameerdev.repositories.jooq;
 
 import com.ameerdev.jooq.generated.tables.records.ReleaseRecord;
 import com.ameerdev.models.Release;
+import com.ameerdev.repositories.ReleaseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jooq.DSLContext;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ameerdev.jooq.generated.tables.Release.RELEASE;
-import static com.ameerdev.mapper.EnumConverters.ReleaseTypeConverter.toJooqReleaseType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.ReleaseTypeConverter.toJooqReleaseType;
 
 @ApplicationScoped
 public class ReleaseRepositoryImpl implements ReleaseRepository {

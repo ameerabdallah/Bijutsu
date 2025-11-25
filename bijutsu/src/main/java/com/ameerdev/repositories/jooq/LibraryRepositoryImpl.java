@@ -1,8 +1,9 @@
-package com.ameerdev.repositories;
+package com.ameerdev.repositories.jooq;
 
 import com.ameerdev.jooq.generated.tables.records.LibraryRecord;
-import com.ameerdev.mapper.LibraryMapper;
-import com.ameerdev.mapper.LibraryWithPathsMapper;
+import com.ameerdev.repositories.LibraryRepository;
+import com.ameerdev.repositories.jooq.mapper.LibraryMapper;
+import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
 import com.ameerdev.models.Library;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ameerdev.jooq.generated.tables.Library.LIBRARY;
-import static com.ameerdev.mapper.EnumConverters.BookTypeConverter.toJooqBookType;
-import static com.ameerdev.mapper.EnumConverters.ReadDirectionConverter.toJooqReadDirection;
-import static com.ameerdev.mapper.EnumConverters.SeriesTypeConverter.toJooqSeriesType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.BookTypeConverter.toJooqBookType;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.ReadDirectionConverter.toJooqReadDirection;
+import static com.ameerdev.repositories.jooq.mapper.EnumConverters.SeriesTypeConverter.toJooqSeriesType;
 
 @ApplicationScoped
 public class LibraryRepositoryImpl implements LibraryRepository {

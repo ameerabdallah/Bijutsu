@@ -169,6 +169,49 @@ package "com.ameerdev.resource.dto.mappers" {
   }
 }
 
+package "com.ameerdev.repositories.jooq" {
+  class LibraryRepositoryImpl implements LibraryRepository {
+    + LibraryRepositoryImpl():
+    + fetchLibraryById(long): Optional<Library>
+    + create(Library): Optional<Library>
+    + findAllLibraries(): List<Library>
+    + fetchLibraryPaths(long): List<String>
+    + update(long, Library): void
+    + deleteById(long): void
+  }
+
+  class ReleaseRepositoryImpl implements ReleaseRepository {
+    + ReleaseRepositoryImpl():
+    + findAll(): List<Release>
+    + deleteByIds(Collection<Long>): void
+    - fillRecordFromDomainWithId(Release, ReleaseRecord): void
+    + updateBatch(Collection<Release>): void
+    - fillRecordFromDomain(Release, ReleaseRecord): void
+    + create(Release): Optional<Release>
+    + findByMetadataSourceId(String): Optional<Release>
+    + deleteById(long): boolean
+    + findBySeriesId(long): List<Release>
+    + update(Release): Optional<Release>
+    + createBatch(Collection<Release>): List<Release>
+    + findById(long): Optional<Release>
+  }
+
+  class SeriesRepositoryImpl implements SeriesRepository {
+    + SeriesRepositoryImpl():
+    + fetchSeriesById(Long): Optional<Series>
+    + create(Series): Optional<Series>
+    + findSeriesPathsByLibraryId(long): Set<String>
+    + deleteByIds(Collection<Long>): void
+    + findAll(): List<Series>
+    + deleteById(long): boolean
+    + findSeriesByMetadataSourceId(String): Optional<Series>
+    + deleteBySeriesPaths(Collection<String>): void
+    - fillFromDomain(Series, SeriesRecord): void
+    + update(Series): Optional<Series>
+    + findSeriesByLibraryId(long): List<Series>
+  }
+}
+
 package "com.ameerdev.repositories" {
   interface LibraryRepository << interface >> {
     + update(long, Library): void
@@ -176,16 +219,6 @@ package "com.ameerdev.repositories" {
     + create(Library): Optional<Library>
     + findAllLibraries(): List<Library>
     + fetchLibraryPaths(long): List<String>
-    + deleteById(long): void
-  }
-
-  class LibraryRepositoryImpl {
-    + LibraryRepositoryImpl():
-    + fetchLibraryById(long): Optional<Library>
-    + create(Library): Optional<Library>
-    + findAllLibraries(): List<Library>
-    + fetchLibraryPaths(long): List<String>
-    + update(long, Library): void
     + deleteById(long): void
   }
 
@@ -202,22 +235,6 @@ package "com.ameerdev.repositories" {
     + findById(long): Optional<Release>
   }
 
-  class ReleaseRepositoryImpl {
-    + ReleaseRepositoryImpl():
-    + findAll(): List<Release>
-    + deleteByIds(Collection<Long>): void
-    - fillRecordFromDomainWithId(Release, ReleaseRecord): void
-    + updateBatch(Collection<Release>): void
-    - fillRecordFromDomain(Release, ReleaseRecord): void
-    + create(Release): Optional<Release>
-    + findByMetadataSourceId(String): Optional<Release>
-    + deleteById(long): boolean
-    + findBySeriesId(long): List<Release>
-    + update(Release): Optional<Release>
-    + createBatch(Collection<Release>): List<Release>
-    + findById(long): Optional<Release>
-  }
-
   interface SeriesRepository << interface >> {
     + findAll(): List<Series>
     + create(Series): Optional<Series>
@@ -229,21 +246,6 @@ package "com.ameerdev.repositories" {
     + findSeriesByMetadataSourceId(String): Optional<Series>
     + fetchSeriesById(Long): Optional<Series>
     + update(Series): Optional<Series>
-  }
-
-  class SeriesRepositoryImpl {
-    + SeriesRepositoryImpl():
-    + fetchSeriesById(Long): Optional<Series>
-    + create(Series): Optional<Series>
-    + findSeriesPathsByLibraryId(long): Set<String>
-    + deleteByIds(Collection<Long>): void
-    + findAll(): List<Series>
-    + deleteById(long): boolean
-    + findSeriesByMetadataSourceId(String): Optional<Series>
-    + deleteBySeriesPaths(Collection<String>): void
-    - fillFromDomain(Series, SeriesRecord): void
-    + update(Series): Optional<Series>
-    + findSeriesByLibraryId(long): List<Series>
   }
 }
 
@@ -309,7 +311,7 @@ package "com.ameerdev.service" {
   }
 }
 
-package "com.ameerdev.mapper" {
+package "com.ameerdev.repositories.jooq.mapper" {
   class LibraryMapper {
     + LibraryMapper(List<String>):
     + map(Record): Library?
@@ -385,13 +387,6 @@ package "com.ameerdev.metadata_provider.mangaupdates" {
   }
 }
 
-package "com.ameerdev.cdi.producers" {
-  class JooqConfiguration {
-    + JooqConfiguration():
-    + dslContext(): DSLContext
-  }
-}
-
 ComicVineMetadataProvider     ..>  BookType
 ComicVineMetadataProvider     ..>  MetadataProvider
 ComicVineMetadataProvider     ..>  Release
@@ -400,12 +395,6 @@ ComicVineMetadataProvider     ..>  SeriesIdentifier
 CreateLibraryDTO              ..>  BookType
 CreateLibraryDTO              ..>  ReadDirection
 CreateLibraryDTO              ..>  SeriesType
-JooqConfiguration             ..>  Library
-JooqConfiguration             ..>  LibraryWithPathsMapper
-JooqConfiguration             ..>  Release
-JooqConfiguration             ..>  ReleaseMapper
-JooqConfiguration             ..>  Series
-JooqConfiguration             ..>  SeriesMapper
 Library                       ..>  BookType
 Library                       ..>  ReadDirection
 Library                       ..>  SeriesType
