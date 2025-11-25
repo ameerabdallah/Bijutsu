@@ -170,45 +170,19 @@ package "com.ameerdev.resource.dto.mappers" {
 }
 
 package "com.ameerdev.repositories.jooq" {
-  class LibraryRepositoryImpl implements LibraryRepository {
+  class LibraryRepositoryImpl implements com.ameerdev.repositories.LibraryRepository {
     + LibraryRepositoryImpl():
-    + fetchLibraryById(long): Optional<Library>
-    + create(Library): Optional<Library>
-    + findAllLibraries(): List<Library>
-    + fetchLibraryPaths(long): List<String>
-    + update(long, Library): void
-    + deleteById(long): void
   }
 
-  class ReleaseRepositoryImpl implements ReleaseRepository {
+  class ReleaseRepositoryImpl implements com.ameerdev.repositories.ReleaseRepository {
     + ReleaseRepositoryImpl():
-    + findAll(): List<Release>
-    + deleteByIds(Collection<Long>): void
     - fillRecordFromDomainWithId(Release, ReleaseRecord): void
-    + updateBatch(Collection<Release>): void
     - fillRecordFromDomain(Release, ReleaseRecord): void
-    + create(Release): Optional<Release>
-    + findByMetadataSourceId(String): Optional<Release>
-    + deleteById(long): boolean
-    + findBySeriesId(long): List<Release>
-    + update(Release): Optional<Release>
-    + createBatch(Collection<Release>): List<Release>
-    + findById(long): Optional<Release>
   }
 
-  class SeriesRepositoryImpl implements SeriesRepository {
+  class SeriesRepositoryImpl implements com.ameerdev.repositories.SeriesRepository {
     + SeriesRepositoryImpl():
-    + fetchSeriesById(Long): Optional<Series>
-    + create(Series): Optional<Series>
-    + findSeriesPathsByLibraryId(long): Set<String>
-    + deleteByIds(Collection<Long>): void
-    + findAll(): List<Series>
-    + deleteById(long): boolean
-    + findSeriesByMetadataSourceId(String): Optional<Series>
-    + deleteBySeriesPaths(Collection<String>): void
     - fillFromDomain(Series, SeriesRecord): void
-    + update(Series): Optional<Series>
-    + findSeriesByLibraryId(long): List<Series>
   }
 }
 
@@ -359,12 +333,7 @@ package "com.ameerdev.metadata_provider" {
 }
 
 package "com.ameerdev.metadata_provider.comicvine" {
-  class ComicVineMetadataProvider {
-    + ComicVineMetadataProvider():
-    + metadataType(): BookType
-    + fetchSeriesMetadata(String): Optional<Series>
-    + search(SeriesIdentifier): Optional<String>
-    + fetchReleaseMetadata(String, int): Optional<Release>
+  class ComicVineMetadataProvider implements com.ameerdev.metadata_provider.MetadataProvider {
   }
 }
 
@@ -373,22 +342,17 @@ package "com.ameerdev.metadata_provider.comicvine.client.api" {
 }
 
 package "com.ameerdev.metadata_provider.mangaupdates" {
-  class MangaUpdatesMetadataProvider {
-    + MangaUpdatesMetadataProvider():
-    + search(SeriesIdentifier): Optional<String>
-    + fetchSeriesMetadata(String): Optional<Series>
-    + metadataType(): BookType
+  class MangaUpdatesMetadataProvider implements com.ameerdev.metadata_provider.MetadataProvider {
+    proxy: MangaUpdatesMetadataProxy
   }
 
   class MangaUpdatesMetadataProxy {
-    + MangaUpdatesMetadataProxy():
     + searchSeries(String, String): SeriesSearchResponseV1
     + getSeriesById(Long): SeriesModelV1
   }
 }
 
 ComicVineMetadataProvider     ..>  BookType
-ComicVineMetadataProvider     ..>  MetadataProvider
 ComicVineMetadataProvider     ..>  Release
 ComicVineMetadataProvider     ..>  Series
 ComicVineMetadataProvider     ..>  SeriesIdentifier
@@ -402,7 +366,6 @@ LibraryMapper                 ..>  Library
 LibraryRepository             ..>  Library
 LibraryRepositoryImpl         ..>  Library
 LibraryRepositoryImpl         ..>  LibraryMapper
-LibraryRepositoryImpl         ..>  LibraryRepository
 LibraryRepositoryImpl         ..>  LibraryWithPathsMapper
 LibraryResourceV1             ..>  CreateLibraryDTO
 LibraryResourceV1             ..>  Library
@@ -428,7 +391,6 @@ LibraryService                ..>  LibraryScannerService
 LibraryWithPathsMapper        ..>  Library
 MangaUpdatesMetadataProvider  ..>  BookType
 MangaUpdatesMetadataProvider  ..>  MangaUpdatesMetadataProxy
-MangaUpdatesMetadataProvider  ..>  MetadataProvider
 MangaUpdatesMetadataProvider  ..>  Series
 MangaUpdatesMetadataProvider  ..>  SeriesIdentifier
 MetadataProvider              ..>  BookType
@@ -445,7 +407,6 @@ Release                       ..>  ReleaseType
 ReleaseMapper                 ..>  Release
 ReleaseRepository             ..>  Release
 ReleaseRepositoryImpl         ..>  Release
-ReleaseRepositoryImpl         ..>  ReleaseRepository
 ReleaseResourceV1             ..>  ReleaseService
 ReleaseService                ..>  Release
 ReleaseService                ..>  ReleaseRepository
@@ -454,7 +415,6 @@ RequestMappers                ..>  Library
 SeriesMapper                  ..>  Series
 SeriesRepository              ..>  Series
 SeriesRepositoryImpl          ..>  Series
-SeriesRepositoryImpl          ..>  SeriesRepository
 SeriesResourceV1              ..>  Series
 SeriesResourceV1              ..>  SeriesService
 SeriesScanData                ..>  Series
