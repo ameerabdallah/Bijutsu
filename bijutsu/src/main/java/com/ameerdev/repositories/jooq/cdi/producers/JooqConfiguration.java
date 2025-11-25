@@ -1,4 +1,4 @@
-package com.ameerdev.cdi.producers;
+package com.ameerdev.repositories.jooq.cdi.producers;
 
 import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
 import com.ameerdev.repositories.jooq.mapper.ReleaseMapper;
