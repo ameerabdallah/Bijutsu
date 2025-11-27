@@ -41,3 +41,7 @@ nb-configuration.xml
 .certs/
 
 .claude/
+
+# Keeps getting added from builds. Spent way too long trying to figure out
+# what's causing it. Just ignore it.
+nul

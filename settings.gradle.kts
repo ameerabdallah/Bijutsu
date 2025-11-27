@@ -11,6 +11,9 @@ pluginManagement {
     }
 }
 
+include(":bijutsu-domain")
 include(":bijutsu")
+include(":bijutsu-jooq:codegen")
+include(":bijutsu-jooq:repository")
 
 rootProject.name = "Bijutsu"

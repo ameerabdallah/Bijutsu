@@ -87,7 +87,6 @@ public class LibraryScannerService {
         );
     }
 
-
     private @NotNull SeriesScanData fetchSeriesScanData(Library library) {
         Set<String> fileSystemSeriesPaths = new HashSet<>();
         for (String path : library.getPaths()) {
@@ -173,7 +172,7 @@ public class LibraryScannerService {
     }
 
     private void scanSeries(Library library, Path path) {
-        MetadataProvider metadataProvider = metadataProviderFactory.getProvider(library.getBookType());
+        MetadataProvider metadataProvider = metadataProviderFactory.getDefaultProvider(library.getBookType());
         SeriesIdentifier seriesIdentifier = parserService.parseSeriesName(String.valueOf(path.getFileName()));
         Optional<String> metadataId = metadataProvider.search(seriesIdentifier);
         if (metadataId.isEmpty()) {
@@ -192,7 +191,7 @@ public class LibraryScannerService {
     }
 
     private void scanSeries(Library library, Series series) {
-        MetadataProvider metadataProvider = metadataProviderFactory.getProvider(library.getBookType());
+        MetadataProvider metadataProvider = metadataProviderFactory.getDefaultProvider(library.getBookType());
         // Placeholder for scanning logic
         log.info(
                 "Scanning {} in library ID: {} at path: {} with provider: {}",

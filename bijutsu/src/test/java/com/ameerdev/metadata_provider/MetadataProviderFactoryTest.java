@@ -15,22 +15,22 @@ public class MetadataProviderFactoryTest {
 
     @Test
     public void testDefaultMetadataProviderComics() {
-        MetadataProvider metadataProvider = testMetadataProviderFactory.getProvider(BookType.COMIC);
+        MetadataProvider metadataProvider = testMetadataProviderFactory.getDefaultProvider(BookType.COMIC);
 
         assertInstanceOf(ComicVineMetadataProvider.class, metadataProvider);
     }
 
     @Test
     public void testDefaultMetadataProviderManga() {
-        MetadataProvider metadataProvider = testMetadataProviderFactory.getProvider(BookType.MANGA);
+        MetadataProvider metadataProvider = testMetadataProviderFactory.getDefaultProvider(BookType.MANGA);
 
         assertInstanceOf(MangaUpdatesMetadataProvider.class, metadataProvider);
     }
 
     @Test
     public void testMetadataProviderCorrectMetadataType() {
-        MetadataProvider mangaProvider = testMetadataProviderFactory.getProvider(BookType.MANGA);
-        MetadataProvider comicsProvider = testMetadataProviderFactory.getProvider(BookType.COMIC);
+        MetadataProvider mangaProvider = testMetadataProviderFactory.getDefaultProvider(BookType.MANGA);
+        MetadataProvider comicsProvider = testMetadataProviderFactory.getDefaultProvider(BookType.COMIC);
 
         assertEquals(BookType.MANGA, mangaProvider.metadataType());
         assertEquals(BookType.COMIC, comicsProvider.metadataType());

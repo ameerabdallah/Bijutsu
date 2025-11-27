@@ -1,0 +1,2 @@
+[libraries]
+mockito = "org.mockito:mockito-core:5.20.0"
