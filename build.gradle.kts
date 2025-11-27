@@ -5,9 +5,3 @@ plugins {
 tasks.withType<Wrapper> {
     gradleVersion = "9.1.0"
 }
-
-gradle.taskGraph.whenReady {
-    gradle.buildFinished {
-        file("${rootDir}/nul").delete()
-    }
-}
