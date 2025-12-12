@@ -48,3 +48,8 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.add("-parameters")
 }
+
+// Fix task dependency issue: checkstyle should run after jandex
+tasks.named("checkstyleMain") {
+    mustRunAfter(tasks.named("jandex"))
+}
