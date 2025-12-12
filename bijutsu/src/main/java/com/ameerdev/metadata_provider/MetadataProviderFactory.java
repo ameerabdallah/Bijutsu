@@ -5,21 +5,19 @@ import com.ameerdev.metadata_provider.mangaupdates.MangaUpdatesMetadataProvider;
 import com.ameerdev.models.enums.BookType;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import java.util.Map;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class MetadataProviderFactory {
-    private final Map<BookType, MetadataProvider> providerMap;
-
-    MetadataProviderFactory() {
-        providerMap = Map.of(
-                BookType.COMIC, new ComicVineMetadataProvider(),
-                BookType.MANGA, new MangaUpdatesMetadataProvider()
-        );
-    }
+    @Inject
+    MangaUpdatesMetadataProvider mangaProvider;
+    @Inject
+    ComicVineMetadataProvider comicProvider;
 
     public @Nonnull MetadataProvider getDefaultProvider(BookType bookType) {
-        return providerMap.get(bookType);
+        return switch (bookType) {
+            case MANGA -> mangaProvider;
+            case COMIC -> comicProvider;
+        };
     }
 }
