@@ -23,6 +23,7 @@ dependencies {
     // Lombok for models
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1")
 }
 
 group = "com.ameerdev"

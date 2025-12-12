@@ -6,10 +6,13 @@ import com.ameerdev.models.Library;
 import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.SeriesMetadataJson;
 import com.ameerdev.models.enums.ReleaseType;
 import com.ameerdev.repositories.LibraryRepository;
 import com.ameerdev.repositories.ReleaseRepository;
 import com.ameerdev.repositories.SeriesRepository;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -40,6 +44,7 @@ public class LibraryScannerService {
     MetadataProviderFactory metadataProviderFactory;
     @Inject
     ParserService parserService;
+    @SuppressWarnings("CdiInjectionPointsInspection")
     @Inject
     ManagedExecutor executor;
 
@@ -201,15 +206,18 @@ public class LibraryScannerService {
                 metadataProvider.getClass().getSimpleName()
         );
 
+        // Check for series.json file first
+        Optional<SeriesMetadataJson> localMetadata = parseSeriesJsonFile(series.getPath());
+
+        // Fetch metadata from provider as fallback
+        Optional<Series> providerMetadata = Optional.empty();
         if (series.getMetadataSourceId().isPresent()) {
-            Optional<Series> metadata = metadataProvider.fetchSeriesMetadata(series.getMetadataSourceId().get());
-            metadata.ifPresent(meta -> {
-                meta.setLibraryId(series.getLibraryId());
-                meta.setPath(series.getPath());
-                meta.setId(series.getId());
-                seriesRepository.update(meta);
-            });
+            providerMetadata = metadataProvider.fetchSeriesMetadata(series.getMetadataSourceId().get());
         }
+
+        // Merge metadata: prefer local series.json, fallback to provider
+        Series updatedSeries = mergeSeriesMetadata(series, localMetadata, providerMetadata);
+        seriesRepository.update(updatedSeries);
 
         // diff found files with existing releases
         Set<Path> files = findAllReleaseFiles(series);
@@ -293,5 +301,72 @@ public class LibraryScannerService {
             }
         }
         return false;
+    }
+
+    /**
+     * Parses the series.json file from the series directory if it exists.
+     *
+     * @param seriesPath The path to the series directory
+     * @return Optional containing the parsed metadata, or empty if file doesn't exist or parsing fails
+     */
+    private Optional<SeriesMetadataJson> parseSeriesJsonFile(String seriesPath) {
+        Path seriesJsonPath = Path.of(seriesPath, "series.json");
+
+        if (!Files.exists(seriesJsonPath)) {
+            log.debug("No series.json found at: {}", seriesJsonPath);
+            return Optional.empty();
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION, true);
+            SeriesMetadataJson metadata = objectMapper.readValue(seriesJsonPath.toFile(), SeriesMetadataJson.class);
+            log.info("Successfully parsed series.json at: {}", seriesJsonPath);
+            return Optional.of(metadata);
+        } catch (IOException e) {
+            log.warn("Failed to parse series.json at: {}", seriesJsonPath, e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Merges metadata from local series.json and metadata provider.
+     * Prefers local metadata when available, falls back to provider metadata.
+     *
+     * @param series The original series entity
+     * @param localMetadata Optional metadata from series.json file
+     * @param providerMetadata Optional metadata from the metadata provider
+     * @return Updated Series object with merged metadata
+     */
+    private Series mergeSeriesMetadata(Series series,
+                                      Optional<SeriesMetadataJson> localMetadata,
+                                      Optional<Series> providerMetadata) {
+        if (providerMetadata.isPresent()) {
+            Series providerSeries = providerMetadata.get();
+            series.setTitle(providerSeries.getTitle());
+            series.setDescription(providerSeries.getDescription());
+            series.setReleaseYear(providerSeries.getReleaseYear());
+            series.setAuthor(providerSeries.getAuthor());
+        }
+        if (localMetadata.isPresent()) {
+            SeriesMetadataJson localMeta = localMetadata.get();
+            SeriesMetadataJson.Metadata metadata = localMeta.getMetadata();
+
+            if (metadata.getName() != null) {
+                series.setTitle(metadata.getName());
+            }
+            if (metadata.getDescriptionText() != null) {
+                series.setDescription(metadata.getDescriptionText());
+            }
+            if (metadata.getYear() != null) {
+                series.setReleaseYear(metadata.getYear());
+            }
+            // Note: series.json schema doesn't have an author field, only publisher/imprint
+            if (metadata.getPublisher() != null) {
+                series.setAuthor(metadata.getPublisher());
+            }
+        }
+
+        return series;
     }
 }
