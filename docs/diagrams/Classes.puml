@@ -71,6 +71,48 @@ package "com.ameerdev.models" {
     + Page():
   }
 
+  class SeriesMetadataJson {
+    + SeriesMetadataJson(String, SeriesMetadataJson.Metadata):
+    + SeriesMetadataJson():
+    - version: String
+    - metadata: Metadata
+    + builder(): SeriesMetadataJsonBuilder
+     version: String
+     metadata: Metadata
+  }
+
+  class "SeriesMetadataJson.Metadata" as SeriesMetadataJsonMetadata {
+    + Metadata(String, String, String, String, Integer, Integer, String, String, Integer, String, String, List<CollectedItem>, String, Integer, String, String):
+    + Metadata():
+    - type: String
+    - publisher: String
+    - imprint: String
+    - name: String
+    - comicid: Integer
+    - year: Integer
+    - descriptionText: String
+    - descriptionFormatted: String
+    - volume: Integer
+    - booktype: String
+    - ageRating: String
+    - collects: List<CollectedItem>
+    - comicImage: String
+    - totalIssues: Integer
+    - publicationRun: String
+    - status: String
+    + builder(): MetadataBuilder
+  }
+
+  class "SeriesMetadataJson.CollectedItem" as SeriesMetadataJsonCollectedItem {
+    + CollectedItem(String, String, String, String):
+    + CollectedItem():
+    - series: String
+    - comicid: String
+    - issueid: String
+    - issues: String
+    + builder(): CollectedItemBuilder
+  }
+
   class SeriesIdentifier {
     + SeriesIdentifier(String?, String?, Integer?):
     + SeriesIdentifier():
@@ -321,14 +363,9 @@ package "com.ameerdev.metadata_provider" {
   }
 
   class MetadataProviderFactory {
-    + MetadataProviderFactory():
-    + getProvider(BookType): MetadataProvider
-    + init(): void
-  }
-
-  interface MetadataConfig << interface >> {
-    + comicProvider(): String
-    + mangaProvider(): String
+    - mangaProvider: MangaUpdatesMetadataProvider
+    - comicProvider: ComicVineMetadataProvider
+    + getDefaultProvider(BookType): MetadataProvider
   }
 }
 
@@ -398,10 +435,11 @@ MetadataProvider              ..>  Release
 MetadataProvider              ..>  Series
 MetadataProvider              ..>  SeriesIdentifier
 MetadataProviderFactory       ..>  BookType
-MetadataProviderFactory       ..>  ComicVineMetadataProvider
-MetadataProviderFactory       ..>  MangaUpdatesMetadataProvider
-MetadataProviderFactory       ..>  MetadataConfig
-MetadataProviderFactory      "1" *--> "providers\n*" MetadataProvider
+MetadataProviderFactory       ..>  MetadataProvider
+MetadataProviderFactory      *--> MangaUpdatesMetadataProvider
+MetadataProviderFactory      *--> ComicVineMetadataProvider
+SeriesMetadataJson           *--> SeriesMetadataJsonMetadata
+SeriesMetadataJsonMetadata   *--> SeriesMetadataJsonCollectedItem
 ParserService                 ..>  SeriesIdentifier
 Release                       ..>  ReleaseType
 ReleaseMapper                 ..>  Release
