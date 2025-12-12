@@ -5,8 +5,8 @@ import com.ameerdev.jooq.generated.enums.ReadDirection;
 import com.ameerdev.jooq.generated.enums.SeriesType;
 import com.ameerdev.models.Library;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.RecordMapper;
 import org.jooq.Record;
+import org.jooq.RecordMapper;
 
 import java.util.ArrayList;
 import java.util.List;

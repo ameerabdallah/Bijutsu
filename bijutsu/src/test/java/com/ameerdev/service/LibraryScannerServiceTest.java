@@ -19,7 +19,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
@@ -55,10 +56,12 @@ class LibraryScannerServiceTest {
         closeable = MockitoAnnotations.openMocks(this);
 
         // Use a real executor for testing async behavior
-        managedExecutor = mock(ManagedExecutor.class, invocation -> {
-            Runnable runnable = invocation.getArgument(0);
-            return CompletableFuture.runAsync(runnable, Executors.newCachedThreadPool());
-        });
+        managedExecutor = mock(
+                ManagedExecutor.class, invocation -> {
+                    Runnable runnable = invocation.getArgument(0);
+                    return CompletableFuture.runAsync(runnable, Executors.newCachedThreadPool());
+                }
+        );
 
         libraryScannerService = new LibraryScannerService();
         libraryScannerService.libraryRepository = libraryRepository;

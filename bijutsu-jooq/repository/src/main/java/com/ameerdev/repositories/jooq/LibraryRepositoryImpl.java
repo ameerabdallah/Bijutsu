@@ -1,10 +1,10 @@
 package com.ameerdev.repositories.jooq;
 
 import com.ameerdev.jooq.generated.tables.records.LibraryRecord;
+import com.ameerdev.models.Library;
 import com.ameerdev.repositories.LibraryRepository;
 import com.ameerdev.repositories.jooq.mapper.LibraryMapper;
 import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
-import com.ameerdev.models.Library;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jetbrains.annotations.NotNull;

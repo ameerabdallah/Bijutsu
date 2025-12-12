@@ -52,8 +52,10 @@ public class ReleaseResourceV1 {
 
                         return Response.ok(filePath.toFile())
                                 .type(contentType)
-                                .header("Content-Disposition",
-                                        "attachment; filename=\"" + sanitizedFilename + "\"")
+                                .header(
+                                        "Content-Disposition",
+                                        "attachment; filename=\"" + sanitizedFilename + "\""
+                                )
                                 .build();
 
                     } catch (IOException e) {

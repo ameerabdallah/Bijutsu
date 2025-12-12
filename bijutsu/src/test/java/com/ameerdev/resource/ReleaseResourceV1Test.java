@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.any;
-import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 class ReleaseResourceV1Test {

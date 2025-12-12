@@ -9,12 +9,14 @@ import java.util.Optional;
 public interface ReleaseRepository {
     /**
      * Retrieve all releases from the database.
+     *
      * @return a list of all Release objects
      */
     List<Release> findAll();
 
     /**
      * Retrieve a release by its ID.
+     *
      * @param id the ID of the release
      * @return an Optional containing the Release if found, or an empty Optional if not found
      */
@@ -22,6 +24,7 @@ public interface ReleaseRepository {
 
     /**
      * Retrieve all releases for a specific series.
+     *
      * @param seriesId the ID of the series
      * @return a list of releases for the given series
      */
@@ -29,12 +32,15 @@ public interface ReleaseRepository {
 
     /**
      * Retrieve a release by its metadata source ID.
+     *
      * @param metadataSourceId the metadata source ID
      * @return an Optional containing the Release if found, or an empty Optional if not found
      */
     Optional<Release> findByMetadataSourceId(String metadataSourceId);
+
     /**
      * Create a new release in the repository.
+     *
      * @param release the release to be created
      * @return the created release wrapped in an Optional, or an empty Optional if creation failed
      */
@@ -42,6 +48,7 @@ public interface ReleaseRepository {
 
     /**
      * Create multiple releases
+     *
      * @param releases the collection of releases to be created
      * @return a list of created releases
      */
@@ -51,6 +58,7 @@ public interface ReleaseRepository {
 
     /**
      * Update an existing release in the repository.
+     *
      * @param release the release to be updated
      * @return the updated release wrapped in an Optional, or an empty Optional if update failed
      */
@@ -63,6 +71,7 @@ public interface ReleaseRepository {
 
     /**
      * Delete a release by its ID.
+     *
      * @param id the ID of the release to delete
      * @return true if the release was deleted, false otherwise
      */

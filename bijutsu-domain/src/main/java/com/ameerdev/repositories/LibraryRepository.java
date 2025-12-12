@@ -9,12 +9,14 @@ import java.util.Optional;
 public interface LibraryRepository {
     /**
      * Retrieve all library records from the database.
+     *
      * @return a list of all LibraryRecord objects
      */
     List<Library> findAllLibraries();
 
     /**
      * Retrieve all paths associated with a specific library ID.
+     *
      * @param libraryId the ID of the library
      * @return a list of paths associated with the library
      */
@@ -22,6 +24,7 @@ public interface LibraryRepository {
 
     /**
      * Retrieve a library record by its ID.
+     *
      * @param libraryId the ID of the library
      * @return an Optional containing the LibraryRecord if found, or an empty Optional if not found
      */
@@ -29,6 +32,7 @@ public interface LibraryRepository {
 
     /**
      * Create a new library record in the database. Also creates the necessary directory records.
+     *
      * @param library the library to be created
      * @return the created library record wrapped in an Optional, or an empty Optional if creation failed
      */
@@ -36,14 +40,16 @@ public interface LibraryRepository {
 
     /**
      * Delete a library record by its ID.
+     *
      * @param libraryId the ID of the library to be deleted
      */
     void deleteById(long libraryId);
 
     /**
      * Update an existing library record in the database.
+     *
      * @param libraryId the ID of the library to be updated
-     * @param library the library data to update
+     * @param library   the library data to update
      */
     void update(long libraryId, @NotNull Library library);
 }

@@ -2,11 +2,7 @@ package com.ameerdev.service;
 
 import com.ameerdev.metadata_provider.MetadataProvider;
 import com.ameerdev.metadata_provider.MetadataProviderFactory;
-import com.ameerdev.models.Library;
-import com.ameerdev.models.Release;
-import com.ameerdev.models.Series;
-import com.ameerdev.models.SeriesIdentifier;
-import com.ameerdev.models.SeriesMetadataJson;
+import com.ameerdev.models.*;
 import com.ameerdev.models.enums.ReleaseType;
 import com.ameerdev.repositories.LibraryRepository;
 import com.ameerdev.repositories.ReleaseRepository;
@@ -266,7 +262,10 @@ public class LibraryScannerService {
             release.setIndex(i + 1);
             series.getMetadataSourceId().ifPresent(
                     id -> {
-                        Optional<Release> metadataRelease = metadataProvider.fetchReleaseMetadata(id, release.getIndex());
+                        Optional<Release> metadataRelease = metadataProvider.fetchReleaseMetadata(
+                                id,
+                                release.getIndex()
+                        );
                         if (metadataRelease.isPresent()) {
                             release.setTitle(metadataRelease.get().getTitle());
                             release.setMetadataSourceId(metadataRelease.get().getMetadataSourceId());
@@ -333,14 +332,14 @@ public class LibraryScannerService {
      * Merges metadata from local series.json and metadata provider.
      * Prefers local metadata when available, falls back to provider metadata.
      *
-     * @param series The original series entity
-     * @param localMetadata Optional metadata from series.json file
+     * @param series           The original series entity
+     * @param localMetadata    Optional metadata from series.json file
      * @param providerMetadata Optional metadata from the metadata provider
      * @return Updated Series object with merged metadata
      */
     private Series mergeSeriesMetadata(Series series,
-                                      Optional<SeriesMetadataJson> localMetadata,
-                                      Optional<Series> providerMetadata) {
+                                       Optional<SeriesMetadataJson> localMetadata,
+                                       Optional<Series> providerMetadata) {
         if (providerMetadata.isPresent()) {
             Series providerSeries = providerMetadata.get();
             series.setTitle(providerSeries.getTitle());

@@ -62,8 +62,10 @@ class MangaUpdatesMetadataProviderIntegrationTest {
         long secondDuration = System.currentTimeMillis() - startTime;
 
         assertEquals(firstResult, secondResult, "Both results should be the same");
-        // The second call should be significantly faster due to caching. Somewhere around 1ms. If it's not, the cache is likely not working.
+        // The second call should be significantly faster due to caching. Somewhere around 1ms. If it's not, the
+        // cache is likely not working.
         // Not asserting on duration to avoid flaky tests, but printing out for manual verification.
-        System.out.println("First call duration: " + firstDuration + "ms, Second call duration: " + secondDuration + "ms");
+        System.out.println("First call duration: " + firstDuration + "ms, Second call duration: " + secondDuration +
+                                   "ms");
     }
 }

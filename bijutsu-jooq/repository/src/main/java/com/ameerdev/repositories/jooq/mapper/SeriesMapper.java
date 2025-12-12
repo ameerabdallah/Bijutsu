@@ -2,8 +2,8 @@ package com.ameerdev.repositories.jooq.mapper;
 
 import com.ameerdev.models.Series;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.RecordMapper;
 import org.jooq.Record;
+import org.jooq.RecordMapper;
 
 import static com.ameerdev.jooq.generated.Tables.SERIES;
 

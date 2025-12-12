@@ -6,12 +6,12 @@ import com.ameerdev.models.enums.SeriesType;
 
 import java.util.List;
 
-public record CreateLibraryDTO (
+public record CreateLibraryDTO(
         String name,
         String description,
         ReadDirection readDirection,
         BookType libraryType,
         SeriesType seriesType,
         List<String> paths
-){
+) {
 }

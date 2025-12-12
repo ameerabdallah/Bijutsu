@@ -6,12 +6,16 @@ plugins {
 allprojects {
     apply(plugin = "checkstyle")
 
+    checkstyle {
+        toolVersion = "12.2.0"
+    }
+
     tasks.withType<Checkstyle>().configureEach {
         reports {
             xml.required.set(false)
             html.required.set(true)
         }
-        exclude("**/build/**")
+        exclude("**/build/**", "**/generated/**", "**/quarkus-generated-sources/**")
     }
 }
 

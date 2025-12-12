@@ -1,9 +1,9 @@
 package com.ameerdev.metadata_provider;
 
-import com.ameerdev.models.enums.BookType;
 import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.enums.BookType;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 

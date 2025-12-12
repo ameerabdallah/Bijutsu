@@ -1,13 +1,12 @@
 package com.ameerdev.metadata_provider.comicvine;
 
 import com.ameerdev.metadata_provider.MetadataProvider;
-import com.ameerdev.models.enums.BookType;
 import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
 import com.ameerdev.models.SeriesIdentifier;
+import com.ameerdev.models.enums.BookType;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
-
 import java.util.Optional;
 
 @ApplicationScoped

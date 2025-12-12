@@ -12,6 +12,7 @@ import static io.restassured.RestAssured.given;
 class LibraryResourceV1Test {
 
     public static int libraryId;
+
     @BeforeAll
     static void setUp() {
         // TODO: Generate new Library row in Mock DB and store the id in libraryId
@@ -21,7 +22,8 @@ class LibraryResourceV1Test {
     @Test
     @Disabled
     void createNewLibrary() {
-//        CreateLibraryDTO createLibraryBody = new CreateLibraryDTO("Manga", "Manga Library", ReadDirection.DEFAULT, BookType.MANGA);
+//        CreateLibraryDTO createLibraryBody = new CreateLibraryDTO("Manga", "Manga Library", ReadDirection.DEFAULT,
+//        BookType.MANGA);
 //
 //        given()
 //                .when().post("/v1/library/", createLibraryBody)

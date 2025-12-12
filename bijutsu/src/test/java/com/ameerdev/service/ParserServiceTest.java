@@ -5,7 +5,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 class ParserServiceTest {
@@ -211,6 +211,7 @@ class ParserServiceTest {
 
         assertEquals(expected, actual);
     }
+
     @Test
     void parseNameWithRandomBraces() {
         SeriesIdentifier expected = SeriesIdentifier.builder()

@@ -7,6 +7,9 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * Represents a library containing books.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

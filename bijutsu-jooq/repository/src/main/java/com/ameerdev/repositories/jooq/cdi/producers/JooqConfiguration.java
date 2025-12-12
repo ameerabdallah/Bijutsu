@@ -1,11 +1,11 @@
 package com.ameerdev.repositories.jooq.cdi.producers;
 
-import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
-import com.ameerdev.repositories.jooq.mapper.ReleaseMapper;
-import com.ameerdev.repositories.jooq.mapper.SeriesMapper;
 import com.ameerdev.models.Library;
 import com.ameerdev.models.Release;
 import com.ameerdev.models.Series;
+import com.ameerdev.repositories.jooq.mapper.LibraryWithPathsMapper;
+import com.ameerdev.repositories.jooq.mapper.ReleaseMapper;
+import com.ameerdev.repositories.jooq.mapper.SeriesMapper;
 import io.agroal.api.AgroalDataSource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
